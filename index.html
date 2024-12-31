@@ -147,7 +147,8 @@
     <div class="tree">🎄</div>
     <div id="moscow-time">[  m  o  s  c  o  w  ]</div>
     <div id="message">С наступающим новым 2025 годом! Осталось:</div>
-    <div id="countdown">--:--:--</div>
+    <div id="countdown">Час:Минута:Секунда</div>
+    <span></span>
 
     <div class="garland">
         <span></span>
@@ -207,7 +208,7 @@
             const minutes = Math.floor((difference / (1000 * 60)) % 60);
             const seconds = Math.floor((difference / 1000) % 60);
 
-            countdownElement.textContent = `${hours}ч ${minutes}мин ${seconds}секунд`;
+            countdownElement.textContent = `${hours} : ${minutes} : ${seconds}`;
             document.title = `.cvt roflannov - Happy New Year.`; 
         }
 
