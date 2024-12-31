@@ -19,19 +19,63 @@
             text-align: center;
             user-select: none;
         }
+
+        /* Ёлка */
         .tree {
             font-size: 5rem;
             margin-bottom: 1rem;
         }
+
+        /* Стиль для текста с поздравлением */
         #message {
             font-size: 1.5rem;
             margin: 0.5rem 0;
         }
+
+        /* Таймер */
         #countdown {
             font-size: 1.8rem;
             font-weight: bold;
             margin-top: 0.5rem;
         }
+
+        /* Стиль для текста [m o s c o w : t i m e] */
+        #moscow-time {
+            font-size: 2rem;
+            letter-spacing: 3px;
+            color: #ffd700;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 2rem 0;
+            background: linear-gradient(45deg, #f00, #ff0, #0f0, #00f);
+            background-size: 400% 400%;
+            animation: gradient 3s ease infinite, flicker 1s infinite;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 100% 0;
+            }
+            50% {
+                background-position: 0 100%;
+            }
+            100% {
+                background-position: 100% 0;
+            }
+        }
+
+        @keyframes flicker {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* Снежинки */
         .snowflake {
             position: fixed;
             top: -10px;
@@ -40,6 +84,7 @@
             animation: fall linear infinite;
             user-select: none;
         }
+
         @keyframes fall {
             0% {
                 transform: translateY(-100px);
@@ -50,39 +95,47 @@
                 opacity: 0.5;
             }
         }
+
+        /* Мерцающие огоньки для гирлянды */
         .garland {
             display: flex;
             justify-content: center;
             margin-top: 1rem;
         }
+
         .garland span {
             width: 15px;
             height: 15px;
             margin: 0 5px;
             border-radius: 50%;
             background-color: red;
-            animation: blink 1s infinite;
+            animation: blink 1.5s infinite ease-in-out;
         }
+
         .garland span:nth-child(2) {
             background-color: yellow;
             animation-delay: 0.3s;
         }
+
         .garland span:nth-child(3) {
             background-color: green;
             animation-delay: 0.6s;
         }
+
         .garland span:nth-child(4) {
             background-color: blue;
             animation-delay: 0.9s;
         }
+
         @keyframes blink {
             0%, 100% {
                 opacity: 1;
             }
             50% {
-                opacity: 0.5;
+                opacity: 0.4;
             }
         }
+
         @media (max-width: 768px) {
             .tree {
                 font-size: 4rem;
@@ -100,7 +153,9 @@
     <div class="tree">🎄</div>
     <div id="message">С наступающим новым 2025 годом! Осталось:</div>
     <div id="countdown">--:--:--</div>
-    <div id="message">[ m o s c o w  :  t i m e ]</div>
+    <div id="moscow-time">[ m o s c o w : t i m e ]</div>
+
+    <!-- Мерцающая гирлянда -->
     <div class="garland">
         <span></span>
         <span></span>
@@ -109,7 +164,7 @@
     </div>
 
     <script>
-        // Disable text selection and context menu
+        // Отключаем правый клик и выделение текста
         document.addEventListener('contextmenu', (e) => e.preventDefault());
         document.addEventListener('keydown', (e) => {
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
@@ -118,6 +173,7 @@
             }
         });
 
+        // Снежинки
         const snowflakeCount = 50;
         let activeSnowflakes = 0;
 
