@@ -20,28 +20,24 @@
             user-select: none;
         }
 
-        /* Ёлка */
         .tree {
             font-size: 5rem;
             margin-bottom: 1rem;
         }
 
-        /* Стиль для текста с поздравлением */
         #message {
             font-size: 1.5rem;
             margin: 0.5rem 0;
         }
 
-        /* Таймер */
         #countdown {
             font-size: 1.8rem;
             font-weight: bold;
             margin-top: 0.5rem;
         }
 
-        /* Стиль для текста [m o s c o w : t i m e] */
         #moscow-time {
-            font-size: 2rem;
+            font-size: 1rem;
             letter-spacing: 3px;
             color: #ffd700;
             font-weight: bold;
@@ -75,7 +71,6 @@
             }
         }
 
-        /* Снежинки */
         .snowflake {
             position: fixed;
             top: -10px;
@@ -96,7 +91,6 @@
             }
         }
 
-        /* Мерцающие огоньки для гирлянды */
         .garland {
             display: flex;
             justify-content: center;
@@ -151,11 +145,10 @@
 </head>
 <body>
     <div class="tree">🎄</div>
+    <div id="moscow-time">[  m  o  s  c  o  w  ]</div>
     <div id="message">С наступающим новым 2025 годом! Осталось:</div>
     <div id="countdown">--:--:--</div>
-    <div id="moscow-time">[ m o s c o w : t i m e ]</div>
 
-    <!-- Мерцающая гирлянда -->
     <div class="garland">
         <span></span>
         <span></span>
@@ -164,7 +157,6 @@
     </div>
 
     <script>
-        // Отключаем правый клик и выделение текста
         document.addEventListener('contextmenu', (e) => e.preventDefault());
         document.addEventListener('keydown', (e) => {
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
@@ -173,7 +165,6 @@
             }
         });
 
-        // Снежинки
         const snowflakeCount = 50;
         let activeSnowflakes = 0;
 
