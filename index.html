@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>.cvt roflannov - Main.</title>
+    <title>.cvt roflannov - Happy New Year.</title>
     <style>
         body {
             margin: 0;
@@ -27,31 +27,40 @@
         }
         .tree {
             margin: 2rem auto;
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, #28a745, #155724);
-            border-radius: 50% 50% 0 0;
+            width: 0;
+            height: 0;
+            border-left: 75px solid transparent;
+            border-right: 75px solid transparent;
+            border-bottom: 150px solid #28a745;
             position: relative;
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-            animation: shine 2s infinite;
         }
         .tree:before {
             content: '';
             position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: -50px;
+            left: -50px;
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 100px solid #28a745;
+        }
+        .tree:after {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: -25px;
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 50px solid #28a745;
+        }
+        .tree-trunk {
             width: 30px;
             height: 50px;
             background: #8b4513;
-        }
-        @keyframes shine {
-            0%, 100% {
-                box-shadow: 0 0 10px #fff, 0 0 20px #fff;
-            }
-            50% {
-                box-shadow: 0 0 20px #fff, 0 0 40px #fff;
-            }
+            margin: 0 auto;
         }
         #countdown {
             font-size: 1.5rem;
@@ -87,14 +96,18 @@
 <body>
     <header>
         <div class="tree"></div>
-        <div id="countdown">Time left: --:--:--:--</div>
-        <h1>Happy New Year!</h1>
+        <div class="tree-trunk"></div>
+        <div id="countdown">До Нового года осталось: --:--:--:--</div>
+        <h1>С Новым годом!</h1>
     </header>
 
     <script>
         const snowflakeCount = 50;
+        let activeSnowflakes = 0;
 
         function createSnowflake() {
+            if (activeSnowflakes >= snowflakeCount) return;
+
             const snowflake = document.createElement('div');
             snowflake.classList.add('snowflake');
             snowflake.textContent = '*';
@@ -102,9 +115,11 @@
             snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
             snowflake.style.fontSize = `${Math.random() * 10 + 10}px`;
             document.body.appendChild(snowflake);
+            activeSnowflakes++;
 
             snowflake.addEventListener('animationend', () => {
                 snowflake.remove();
+                activeSnowflakes--;
             });
         }
 
@@ -118,7 +133,7 @@
             const difference = targetDate - currentDate;
 
             if (difference <= 0) {
-                countdownElement.textContent = 'Happy New Year!';
+                countdownElement.textContent = 'С Новым годом!';
                 return;
             }
 
@@ -127,7 +142,7 @@
             const minutes = Math.floor((difference / (1000 * 60)) % 60);
             const seconds = Math.floor((difference / 1000) % 60);
 
-            countdownElement.textContent = `Time left: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+            countdownElement.textContent = `До Нового года осталось: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
         }
 
         setInterval(updateCountdown, 1000);
