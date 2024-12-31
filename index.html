@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>.cvt roflannov - Main.</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            background: linear-gradient(to bottom, #003366, #001f4d);
+            overflow-x: hidden;
+        }
+        header {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: rgba(0, 51, 102, 0.8);
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+        }
+        header p {
+            font-size: 1.2rem;
+            margin: 0.5rem 0 0;
+        }
+        .content {
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+        .content h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .content p {
+            font-size: 1rem;
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem 0;
+            background: rgba(0, 51, 102, 0.8);
+            font-size: 0.9rem;
+        }
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: white;
+            font-size: 1.5rem;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0.5;
+            }
+        }
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            .content h2 {
+                font-size: 1.5rem;
+            }
+            .content p {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Happy New Year!</h1>
+        <p>Welcome to my New Year-themed portfolio</p>
+    </header>
+
+    <div class="content">
+        <h2>About Me</h2>
+        <p>Hello! My name is [Your Name], and I am a web developer with a passion for creating stunning and functional websites. This is my New Year-themed portfolio site!</p>
+        <p>Feel free to reach out to me for collaborations or just to say hi!</p>
+    </div>
+
+    <footer>
+        &copy; 2024 [Your Name] - All Rights Reserved
+    </footer>
+
+    <script>
+        // Generate falling snowflakes
+        const snowflakeCount = 50;
+
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            snowflake.textContent = '*';
+            snowflake.style.left = `${Math.random() * 100}vw`;
+            snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            snowflake.style.fontSize = `${Math.random() * 10 + 10}px`;
+            document.body.appendChild(snowflake);
+
+            snowflake.addEventListener('animationend', () => {
+                snowflake.remove();
+            });
+        }
+
+        setInterval(createSnowflake, 200);
+    </script>
+</body>
+</html>
