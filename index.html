@@ -26,41 +26,9 @@
             margin: 0.5rem 0 0;
         }
         .tree {
-            margin: 2rem auto;
-            width: 0;
-            height: 0;
-            border-left: 75px solid transparent;
-            border-right: 75px solid transparent;
-            border-bottom: 150px solid #28a745;
-            position: relative;
-        }
-        .tree:before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            left: -50px;
-            width: 0;
-            height: 0;
-            border-left: 50px solid transparent;
-            border-right: 50px solid transparent;
-            border-bottom: 100px solid #28a745;
-        }
-        .tree:after {
-            content: '';
-            position: absolute;
-            top: -100px;
-            left: -25px;
-            width: 0;
-            height: 0;
-            border-left: 25px solid transparent;
-            border-right: 25px solid transparent;
-            border-bottom: 50px solid #28a745;
-        }
-        .tree-trunk {
-            width: 30px;
-            height: 50px;
-            background: #8b4513;
-            margin: 0 auto;
+            font-size: 5rem;
+            text-align: center;
+            margin: 1rem 0;
         }
         #countdown {
             font-size: 1.5rem;
@@ -95,9 +63,8 @@
 </head>
 <body>
     <header>
-        <div class="tree"></div>
-        <div class="tree-trunk"></div>
-        <div id="countdown">До Нового года осталось: --:--:--:--</div>
+        <div class="tree">🎄</div>
+        <div id="countdown">С наступающим 2025 годом!</div>
         <h1>С Новым годом!</h1>
     </header>
 
@@ -133,7 +100,8 @@
             const difference = targetDate - currentDate;
 
             if (difference <= 0) {
-                countdownElement.textContent = 'С Новым годом!';
+                countdownElement.textContent = 'С новым 2025 годом!';
+                document.title = 'С новым 2025 годом!';
                 return;
             }
 
@@ -142,7 +110,8 @@
             const minutes = Math.floor((difference / (1000 * 60)) % 60);
             const seconds = Math.floor((difference / 1000) % 60);
 
-            countdownElement.textContent = `До Нового года осталось: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
+            countdownElement.textContent = `С наступающим 2025 годом! Осталось: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
+            document.title = `С наступающим 2025 годом!`; 
         }
 
         setInterval(updateCountdown, 1000);
