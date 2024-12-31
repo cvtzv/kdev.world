@@ -65,7 +65,6 @@
     <header>
         <div class="tree">🎄</div>
         <div id="countdown">С наступающим 2025 годом!</div>
-        <h1>С Новым годом!</h1>
     </header>
 
     <script>
@@ -110,8 +109,8 @@
             const minutes = Math.floor((difference / (1000 * 60)) % 60);
             const seconds = Math.floor((difference / 1000) % 60);
 
-            countdownElement.textContent = `С наступающим 2025 годом! Осталось: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
-            document.title = `С наступающим 2025 годом!`; 
+            countdownElement.textContent = `С наступающим 2025 годом! Осталось: ${hours}ч ${minutes}м ${seconds}с`;
+            document.title = `.cvt roflannov - Happy New Year.`; 
         }
 
         setInterval(updateCountdown, 1000);
