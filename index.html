@@ -3,216 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>.cvt roflannov - Happy New Year.</title>
+    <title>.cvt roflannov - Main.</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
-        body {
+        * {
             margin: 0;
-            font-family: Arial, sans-serif;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
             color: #fff;
-            background: linear-gradient(to bottom, #003366, #001f4d);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            padding: 2rem;
             text-align: center;
-            user-select: none;
         }
 
-        .tree {
-            font-size: 5.2rem;
+        .profile {
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
             margin-bottom: 1rem;
+            border: 3px solid #fff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
         }
 
-        #message {
-            font-size: 1.5rem;
-            margin: 0.5rem 0;
-        }
-
-        #countdown {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-top: 0.5rem;
-        }
-
-        #moscow-time {
-            font-size: 1.5rem;
-            letter-spacing: 3px;
-            color: #ffd700;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin: 2rem 0;
-            background: linear-gradient(45deg, #f00, #ff0, #0f0, #00f);
-            background-size: 400% 400%;
-            animation: gradient 3s ease infinite, flicker 1s infinite;
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
             -webkit-background-clip: text;
-            color: transparent;
+            -webkit-text-fill-color: transparent;
         }
 
-        @keyframes gradient {
-            0% {
-                background-position: 100% 0;
-            }
-            50% {
-                background-position: 0 100%;
-            }
-            100% {
-                background-position: 100% 0;
-            }
+        .bio {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            opacity: 0.9;
         }
 
-        @keyframes flicker {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.7;
-            }
-        }
-
-        .snowflake {
-            position: fixed;
-            top: -10px;
-            color: white;
-            font-size: 1.5rem;
-            animation: fall linear infinite;
-            user-select: none;
-        }
-
-        @keyframes fall {
-            0% {
-                transform: translateY(-100px);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh);
-                opacity: 0.5;
-            }
-        }
-
-        .garland {
+        .social-links {
             display: flex;
             justify-content: center;
-            margin-top: 1rem;
+            gap: 1.5rem;
+            flex-wrap: wrap;
         }
 
-        .garland span {
-            width: 15px;
-            height: 15px;
-            margin: 0 5px;
-            border-radius: 50%;
-            background-color: red;
-            animation: blink 1.5s infinite ease-in-out;
+        .social-link {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
 
-        .garland span:nth-child(2) {
-            background-color: yellow;
-            animation-delay: 0.3s;
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
-        .garland span:nth-child(3) {
-            background-color: green;
-            animation-delay: 0.6s;
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
         }
 
-        .garland span:nth-child(4) {
-            background-color: blue;
-            animation-delay: 0.9s;
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
         }
 
-        @keyframes blink {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.4;
-            }
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card h3 {
+            margin-bottom: 1rem;
+            color: #4ecdc4;
         }
 
         @media (max-width: 768px) {
-            .tree {
-                font-size: 4rem;
+            .container {
+                padding: 1rem;
             }
-            #message {
-                font-size: 1.2rem;
+
+            h1 {
+                font-size: 2rem;
             }
-            #countdown {
-                font-size: 1.5rem;
+
+            .bio {
+                font-size: 1rem;
             }
+        }
+
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.5;
         }
     </style>
 </head>
 <body>
-    <div class="tree">🎄</div>
-    <div id="moscow-time">[  m  o  s  c  o  w  ]</div>
-    <div id="message">С наступающим новым 2025 годом! Осталось:</div>
-    <div id="countdown">- час : минута : секунда -</div>
-    <span></span>
+    <canvas class="background-animation"></canvas>
+    <div class="container">
+        <div class="profile">
+            <img src="/img/profile.jpg" alt="Фото профиля" class="profile-img">
+            <h1>cvt roflannov</h1>
+            <p class="bio">hello </p>
+        </div>
 
-    <div class="garland">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
+        <div class="social-links">
+            <a href="https://t.me/kdevwp" class="social-link">Telegram</a>
+            <a href="https://vk.com/kdevwp" class="social-link">VK</a>
+            <a href="https://github.com/kdevwp" class="social-link">GitHub</a>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <h3>Обо мне</h3>
+                <p>Я ничиво ни умею, все что мной создано - сделано искусственном интеллектом.</p>
+            </div>
+            <div class="card">
+                <h3>Проекты</h3>
+                <p>Telegram Bots: Convertor (mp4 to OGG), возможно еще какие-то но я уже и забыл..</p>
+            </div>
+        </div>
     </div>
 
     <script>
-        document.addEventListener('contextmenu', (e) => e.preventDefault());
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-                e.preventDefault();
-                alert('Доступ к DevTools запрещён!');
+        // Анимированный фон
+        const canvas = document.querySelector('.background-animation');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const particles = [];
+        const particleCount = 50;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * 2 - 1;
             }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+
+        // Анимация появления элементов
+        gsap.from('.profile', {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            ease: 'power3.out'
         });
 
-        const snowflakeCount = 50;
-        let activeSnowflakes = 0;
+        gsap.from('.social-link', {
+            opacity: 0,
+            y: 30,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: 'power3.out'
+        });
 
-        function createSnowflake() {
-            if (activeSnowflakes >= snowflakeCount) return;
-
-            const snowflake = document.createElement('div');
-            snowflake.classList.add('snowflake');
-            snowflake.textContent = '*';
-            snowflake.style.left = `${Math.random() * 100}vw`;
-            snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
-            snowflake.style.fontSize = `${Math.random() * 10 + 10}px`;
-            document.body.appendChild(snowflake);
-            activeSnowflakes++;
-
-            snowflake.addEventListener('animationend', () => {
-                snowflake.remove();
-                activeSnowflakes--;
-            });
-        }
-
-        setInterval(createSnowflake, 200);
-
-        const countdownElement = document.getElementById('countdown');
-
-        function updateCountdown() {
-            const targetDate = new Date('2025-01-01T00:00:00+03:00');
-            const currentDate = new Date();
-            const difference = targetDate - currentDate;
-
-            if (difference <= 0) {
-                document.getElementById('message').textContent = 'С новым 2025 годом!';
-                countdownElement.textContent = '';
-                document.title = 'С новым 2025 годом!';
-                return;
-            }
-
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-            const minutes = Math.floor((difference / (1000 * 60)) % 60);
-            const seconds = Math.floor((difference / 1000) % 60);
-
-            countdownElement.textContent = `${hours} : ${minutes} : ${seconds}`;
-            document.title = `.cvt roflannov - Happy New Year.`; 
-        }
-
-        setInterval(updateCountdown, 1000);
+        gsap.from('.card', {
+            opacity: 0,
+            y: 30,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: 'power3.out',
+            delay: 0.5
+        });
     </script>
 </body>
 </html>
