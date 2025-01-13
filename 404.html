@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>.cvt roflannov - 404 Page Not Found.</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .content {
+            text-align: center;
+            color: white;
+            z-index: 1;
+            padding: 20px;
+        }
+
+        .error-code {
+            font-size: 10em;
+            margin: 0;
+            background: linear-gradient(45deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h2 {
+            font-size: 2em;
+            margin: 20px 0;
+            color: #a78bfa;
+        }
+
+        p {
+            font-size: 1.2em;
+            color: #d1d5db;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #a78bfa, #8b5cf6);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .astronaut {
+            font-size: 100px;
+            animation: spin 20s linear infinite;
+            display: inline-block;
+            margin: 20px 0;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="content">
+        <div class="error-code">404</div>
+        <div class="astronaut">👨‍🚀</div>
+        <h2>Страница не найдена</h2>
+        <p>Похоже, вы забрели в неизведанные уголки космоса. Давайте вернемся на главную!</p>
+        <a href="/" class="back-button">Вернуться домой</a>
+    </div>
+
+    <script>
+        function createStars() {
+            const stars = document.querySelector('.stars');
+            const count = 200;
+
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animation = `twinkle ${2 + Math.random() * 3}s infinite ${Math.random() * 2}s`;
+                
+                const size = Math.random() * 2;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                stars.appendChild(star);
+            }
+        }
+
+        createStars();
+    </script>
+</body>
+</html>
