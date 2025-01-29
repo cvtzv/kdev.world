@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>.cvt roflannov - Main.</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -13,8 +16,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f0f0f;
             color: #fff;
             min-height: 100vh;
             display: flex;
@@ -25,37 +28,51 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             padding: 2rem;
             text-align: center;
+            position: relative;
+            z-index: 1;
         }
 
         .profile {
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
         }
 
         .profile-img {
-            width: 150px;
-            height: 150px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
-            margin-bottom: 1rem;
-            border: 3px solid #fff;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            margin-bottom: 1.5rem;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            padding: 5px;
+            background: linear-gradient(45deg, #FF3366, #FF6B6B, #4ECDC4);
+            transition: transform 0.3s ease;
+        }
+
+        .profile-img:hover {
+            transform: scale(1.05);
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: 3.5rem;
             margin-bottom: 1rem;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background: linear-gradient(45deg, #FF3366, #FF6B6B, #4ECDC4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            letter-spacing: -1px;
         }
 
         .bio {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
             line-height: 1.6;
-            opacity: 0.9;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .social-links {
@@ -63,169 +80,197 @@
             justify-content: center;
             gap: 1.5rem;
             flex-wrap: wrap;
+            margin-bottom: 3rem;
         }
 
         .social-link {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem 2.5rem;
             border-radius: 50px;
             text-decoration: none;
             color: #fff;
             font-weight: 500;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .social-link:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            margin-top: 3rem;
+            margin-top: 2rem;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1.5rem;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 2rem;
+            border-radius: 20px;
             backdrop-filter: blur(10px);
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .card:hover {
             transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
         }
 
         .card h3 {
             margin-bottom: 1rem;
-            color: #4ecdc4;
+            color: #4ECDC4;
+            font-size: 1.5rem;
+            font-weight: 600;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .bio {
-                font-size: 1rem;
-            }
+        .card p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
         }
 
-        .background-animation {
+        .background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .bio {
+                font-size: 1.1rem;
+            }
+
+            .social-link {
+                padding: 0.8rem 1.5rem;
+            }
+        }
+
+        .glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(78, 205, 196, 0.2), transparent 70%);
+            filter: blur(50px);
+            animation: move 10s infinite alternate;
             z-index: -1;
-            opacity: 0.5;
+        }
+
+        @keyframes move {
+            0% {
+                transform: translate(-25%, -25%);
+            }
+            100% {
+                transform: translate(25%, 25%);
+            }
         }
     </style>
 </head>
 <body>
-    <canvas class="background-animation"></canvas>
+    <div class="background"></div>
+    <div class="glow"></div>
     <div class="container">
         <div class="profile">
             <img src="/img/profile.jpg" alt="Фото профиля" class="profile-img">
             <h1>cvt roflannov</h1>
-            <p class="bio">hello </p>
+            <p class="bio"></hello@kdevworld></p>
         </div>
 
         <div class="social-links">
-            <a href="https://t.me/kdevwp" class="social-link">Telegram</a>
-            <a href="https://vk.com/kdevwp" class="social-link">VK</a>
-            <a href="https://github.com/kdevwp" class="social-link">GitHub</a>
+            <a href="https://t.me/kdevwp" class="social-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.94 8.15l-1.88 8.83c-.14.65-.51.8-1.03.5l-2.85-2.1-1.38 1.33c-.15.15-.28.28-.57.28l.2-2.85 5.18-4.68c.23-.2-.05-.31-.35-.12l-6.4 4.03-2.76-.86c-.6-.2-.61-.6.13-.87l10.76-4.15c.5-.17.94.12.95.87z"/>
+                </svg>
+                Telegram
+            </a>
+            <a href="https://vk.com/kdevwp" class="social-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21.547 7h-3.29a.743.743 0 0 0-.655.392s-1.312 2.416-1.734 3.23C14.734 12.813 14 12.126 14 11.11V7.603A1.104 1.104 0 0 0 12.896 6.5h-2.474a1.982 1.982 0 0 0-1.75.813s1.255-.204 1.255 1.49c0 .42.022 1.626.04 2.64a.73.73 0 0 1-1.272.503 21.54 21.54 0 0 1-2.498-4.543.693.693 0 0 0-.63-.403h-2.99a.508.508 0 0 0-.48.685C3.005 10.175 6.918 18 11.38 18h1.878a.742.742 0 0 0 .742-.742v-1.135a.73.73 0 0 1 1.23-.53l2.247 2.112a1.09 1.09 0 0 0 .746.295h2.953c1.424 0 1.424-.988.647-1.753-.546-.538-2.518-2.617-2.518-2.617a1.02 1.02 0 0 1-.078-1.323c.637-.84 1.68-2.212 2.122-2.8.603-.804 1.697-2.507.197-2.507z"/>
+                </svg>
+                VK
+            </a>
+            <a href="https://github.com/kdevwp" class="social-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+                GitHub
+            </a>
         </div>
 
         <div class="cards">
             <div class="card">
                 <h3>Обо мне</h3>
-                <p>Я ничиво ни умею, все что мной создано - сделано искусственном интеллектом.</p>
+                <p>Экспериментирую с новыми технологиями и искусственным интеллектом. Верю в силу автоматизации и стремлюсь создавать полезные инструменты.</p>
             </div>
             <div class="card">
                 <h3>Проекты</h3>
-                <p>Telegram Bots: Convertor (mp4 to OGG), возможно еще какие-то но я уже и забыл..</p>
+                <p>Telegram Боты: Конвертер медиафайлов (MP4 в OGG), чат-боты и другие интересные эксперименты в разработке. Каждый проект - это новый вызов и возможность учиться.</p>
+            </div>
+            <div class="card">
+                <h3>Навыки</h3>
+                <p>Работа с API, интеграция ИИ, разработка ботов, базовые знания веб-технологий. Всегда в поиске новых инструментов для решения интересных задач.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Анимированный фон
-        const canvas = document.querySelector('.background-animation');
-        const ctx = canvas.getContext('2d');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.querySelector('.background').appendChild(renderer.domElement);
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
+        const geometry = new THREE.IcosahedronGeometry(1, 0);
+        const material = new THREE.MeshBasicMaterial({
+            color: 0x4ECDC4,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.1
+        });
+        const icosahedron = new THREE.Mesh(geometry, material);
+        scene.add(icosahedron);
 
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        const particles = [];
-        const particleCount = 50;
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 1;
-                this.speedX = Math.random() * 2 - 1;
-                this.speedY = Math.random() * 2 - 1;
-            }
-
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-
-                if (this.x > canvas.width) this.x = 0;
-                if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0;
-                if (this.y < 0) this.y = canvas.height;
-            }
-
-            draw() {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        function init() {
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
-            }
-        }
+        camera.position.z = 5;
 
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-
             requestAnimationFrame(animate);
+            icosahedron.rotation.x += 0.001;
+            icosahedron.rotation.y += 0.002;
+            renderer.render(scene, camera);
         }
 
-        init();
         animate();
 
-        // Анимация появления элементов
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
         gsap.from('.profile', {
             opacity: 0,
             y: 50,
-            duration: 1,
+            duration: 1.2,
             ease: 'power3.out'
         });
 
@@ -234,7 +279,8 @@
             y: 30,
             duration: 0.8,
             stagger: 0.2,
-            ease: 'power3.out'
+            ease: 'power3.out',
+            delay: 0.5
         });
 
         gsap.from('.card', {
@@ -243,7 +289,7 @@
             duration: 0.8,
             stagger: 0.2,
             ease: 'power3.out',
-            delay: 0.5
+            delay: 1
         });
     </script>
 </body>
