@@ -316,33 +316,33 @@
         </footer>
     </div>
 
-    <script>
-        const tracks = [
-            {
-                name: "Ambient Loop",
-                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-            },
-            {
-                name: "9mice - Anora",
-                src: "/src/tracks/9mice - Anora.mp3"
-            },
-            {
-                name: "zxcursed - lyin n' dyin",
-                src: "/src/tracks/zxcursed - lyin n' dyin.mp3"
-            },
-            {
-                name: "Юпи - Вдыхаю",
-                src: "/src/tracks/Юпи - Вдыхаю.mp3"
-            },
-            {
-                name: "Юпи - Никогда не умел",
-                src: "/src/tracks/Юпи - Никогда не умел.mp3"
-            },
-            {
-                name: "тёмный принц, tewiq, FORTUNA 812 - ПАПА",
-                src: "/src/tracks/тёмный принц, tewiq, FORTUNA 812 - ПАПА.mp3"
-            },
-        ];
+<script>
+    const tracks = [
+        {
+            name: "Ambient Loop",
+            src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+        },
+        {
+            name: "9mice - Anora",
+            src: "/src/tracks/9mice - Anora.mp3"
+        },
+        {
+            name: "zxcursed - lyin n' dyin",
+            src: "/src/tracks/zxcursed - lyin n' dyin.mp3"
+        },
+        {
+            name: "Юпи - Вдыхаю",
+            src: "/src/tracks/Юпи - Вдыхаю.mp3"
+        },
+        {
+            name: "Юпи - Никогда не умел",
+            src: "/src/tracks/Юпи - Никогда не умел.mp3"
+        },
+        {
+            name: "тёмный принц, tewiq, FORTUNA 812 - ПАПА",
+            src: "/src/tracks/тёмный принц, tewiq, FORTUNA 812 - ПАПА.mp3"
+        },
+    ];
         
     let currentTrackIndex = 0;
     let audio = new Audio();
@@ -360,7 +360,11 @@
     const currentTrackDisplay = document.getElementById('current-track');
     const musicToggle = document.getElementById('music-toggle');
 
-    // Инициализация плеера
+    function toggleMusicControls() {
+        isMusicControlsVisible = !isMusicControlsVisible;
+        musicControls.classList.toggle('active');
+    }
+
     function initPlayer() {
         audio.src = tracks[currentTrackIndex].src;
         audio.volume = volumeControl.value / 100;
@@ -374,32 +378,12 @@
                 nextTrack();
             }
         });
-
-        audio.addEventListener('timeupdate', updateProgressBar);
     }
 
-    // Обновление информации о треке
     function updateTrackInfo() {
         currentTrackDisplay.textContent = `${currentTrackIndex + 1}/${tracks.length}: ${tracks[currentTrackIndex].name}`;
     }
 
-    // Обновление прогресс-бара
-    function updateProgressBar() {
-        const progressPercent = (audio.currentTime / audio.duration) * 100;
-        if (!isNaN(progressPercent)) {
-            document.getElementById('progress-bar').value = progressPercent;
-            document.getElementById('current-time').textContent = formatTime(audio.currentTime);
-        }
-    }
-
-    // Форматирование времени
-    function formatTime(seconds) {
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-    }
-
-    // Загрузка страницы
     function simulateLoading() {
         let progress = 0;
         const interval = setInterval(() => {
@@ -414,17 +398,12 @@
         }, 300);
     }
 
-    // Начало воспроизведения
     function startMusic() {
         audio.play()
             .then(() => {
                 isMusicPlaying = true;
                 playPauseIcon.classList.remove('fa-play');
                 playPauseIcon.classList.add('fa-pause');
-                // Устанавливаем общее время трека после загрузки метаданных
-                audio.addEventListener('loadedmetadata', () => {
-                    document.getElementById('total-time').textContent = formatTime(audio.duration);
-                });
             })
             .catch(e => {
                 console.log("Autoplay prevented. User needs to interact first.");
@@ -432,17 +411,20 @@
             });
     }
 
-    // Переключение треков
-    function changeTrack(index) {
-        currentTrackIndex = index;
-        audio.src = tracks[currentTrackIndex].src;
-        updateTrackInfo();
-        if (isMusicPlaying) {
+    function togglePlay() {
+        if (audio.paused) {
             audio.play();
+            playPauseIcon.classList.remove('fa-play');
+            playPauseIcon.classList.add('fa-pause');
+            isMusicPlaying = true;
+        } else {
+            audio.pause();
+            playPauseIcon.classList.remove('fa-pause');
+            playPauseIcon.classList.add('fa-play');
+            isMusicPlaying = false;
         }
     }
 
-    // Следующий трек
     function nextTrack() {
         let newIndex;
         if (isShuffleOn) {
@@ -456,7 +438,6 @@
         changeTrack(newIndex);
     }
 
-    // Предыдущий трек
     function prevTrack() {
         let newIndex;
         if (isShuffleOn) {
@@ -470,29 +451,18 @@
         changeTrack(newIndex);
     }
 
-    // Перемотка трека
-    function seekTrack(e) {
-        const seekTime = (e.target.value / 100) * audio.duration;
-        audio.currentTime = seekTime;
+    function changeTrack(index) {
+        currentTrackIndex = index;
+        audio.src = tracks[currentTrackIndex].src;
+        updateTrackInfo();
+        if (isMusicPlaying) {
+            audio.play();
+        }
     }
 
-    // Переключение режима повтора
-    function toggleRepeat() {
-        isRepeatOn = !isRepeatOn;
-        document.getElementById('repeat-icon').style.color = isRepeatOn ? 'var(--accent-primary)' : 'white';
-    }
-
-    // Переключение режима перемешивания
-    function toggleShuffle() {
-        isShuffleOn = !isShuffleOn;
-        document.getElementById('shuffle-icon').style.color = isShuffleOn ? 'var(--accent-primary)' : 'white';
-    }
-
-    // Инициализация при загрузке страницы
     document.addEventListener('DOMContentLoaded', () => {
         initPlayer();
         
-        // Анимация прогресс-баров навыков
         const skillBars = document.querySelectorAll('.skill-progress');
         const observerOptions = {
             threshold: 0.1
@@ -513,7 +483,22 @@
         });
 
         simulateLoading();
+        
+        // Обработчик кнопки Join
+        joinBtn.addEventListener('click', () => {
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+                startMusic();
+            }, 500);
+        });
+
+        // Обработчик громкости
+        volumeControl.addEventListener('input', () => {
+            audio.volume = volumeControl.value / 100;
+        });
     });
+</script>
 </script>
 </body>
 </html>
