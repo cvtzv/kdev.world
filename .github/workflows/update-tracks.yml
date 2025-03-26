@@ -1,16 +1,4 @@
-- name: Cache jq
-  uses: actions/cache@v3
-  with:
-    path: /var/cache/apt/archives
-    key: ${{ runner.os }}-jq
-
-- name: Pull latest changes
-  run: git pull
-
-- name: Install jq
-  run: sudo apt-get install -y jq
-
-- name: Update Tracks List
+name: Update Tracks List
 
 on:
   push:
@@ -23,6 +11,18 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Cache jq
+        uses: actions/cache@v3
+        with:
+          path: /var/cache/apt/archives
+          key: ${{ runner.os }}-jq
+      
+      - name: Pull latest changes
+        run: git pull
+      
+      - name: Install jq
+        run: sudo apt-get install -y jq
       
       - name: Generate tracks.json
         run: |
@@ -41,6 +41,8 @@ jobs:
           jq . tracks.json > temp.json && mv temp.json tracks.json
           
       - name: Commit changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
