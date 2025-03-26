@@ -6,7 +6,7 @@ on:
       - 'src/tracks/**'
 
 permissions:
-  contents: write  # Важно!
+  contents: write
 
 jobs:
   update-tracks:
@@ -25,8 +25,9 @@ jobs:
           
           find src/tracks -type f \( -iname "*.mp3" -o -iname "*.wav" \) | while read -r file; do
             filename=$(basename "$file")
+            # Удаляем цифры и точки в начале названия файла
             name="${filename%.*}"
-            name=$(echo "$name" | sed -e 's/[\\\/\:\*\?\"\<\>\|]/_/g')
+            name=$(echo "$name" | sed -e 's/^[0-9.]*\s*//' -e 's/[\\\/\:\*\?\"\<\>\|]/_/g')
             echo "  {\"name\": \"$name\", \"src\": \"$file\"}," >> tracks.json
           done
           
