@@ -1,0 +1,49 @@
+- name: Cache jq
+  uses: actions/cache@v3
+  with:
+    path: /var/cache/apt/archives
+    key: ${{ runner.os }}-jq
+
+- name: Pull latest changes
+  run: git pull
+
+- name: Install jq
+  run: sudo apt-get install -y jq
+
+- name: Update Tracks List
+
+on:
+  push:
+    paths:
+      - 'src/music/**'
+
+jobs:
+  update-tracks:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Generate tracks.json
+        run: |
+          echo '[' > tracks.json
+          
+          find src/music -type f \( -iname "*.mp3" -o -iname "*.wav" \) | while read -r file; do
+            filename=$(basename "$file")
+            name="${filename%.*}"
+            name=$(echo "$name" | sed -e 's/[\\\/\:\*\?\"\<\>\|]/_/g')
+            echo "  {\"name\": \"$name\", \"src\": \"$file\"}," >> tracks.json
+          done
+          
+          sed -i '$ s/,$//' tracks.json
+          echo ']' >> tracks.json
+          
+          jq . tracks.json > temp.json && mv temp.json tracks.json
+          
+      - name: Commit changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add tracks.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update tracks.json"
+          git push
