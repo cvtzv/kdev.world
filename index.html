@@ -480,11 +480,7 @@ async function loadTracks() {
   }
 }
 
-audio.addEventListener('error', function() {
-  console.error('Audio error:', audio.error);
-  nextTrack();
-});
-
+let tracks = [];
 let currentTrackIndex = 0;
 let audio = new Audio();
 let isMusicPlaying = false;
@@ -492,6 +488,11 @@ let isMusicControlsVisible = false;
 let isShuffleOn = false;
 let isRepeatOn = false;
 let isSeeking = false;
+
+audio.addEventListener('error', function() {
+  console.error('Audio error:', audio.error);
+  nextTrack();
+});
 
 const loader = document.getElementById('loader');
 const progressBar = document.getElementById('progress');
