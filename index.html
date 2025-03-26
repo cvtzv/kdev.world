@@ -637,7 +637,13 @@ document.addEventListener('DOMContentLoaded', () => {
             joinBtn.style.animation = "pulse 1.5s infinite ease-in-out";
         }
     }, 300);
-    
+
+    const skillProgressBars = document.querySelectorAll('.skill-progress');
+    skillProgressBars.forEach(bar => {
+        const targetWidth = bar.getAttribute('data-width');
+        bar.style.width = targetWidth;
+    });
+	
     joinBtn.addEventListener('click', () => {
         loader.style.opacity = '0';
         setTimeout(() => {
