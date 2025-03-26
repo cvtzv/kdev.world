@@ -538,6 +538,11 @@ async function initPlayer() {
   
   try {
     await audio.load();
+    
+    audio.addEventListener('loadedmetadata', function() {
+      document.getElementById('total-time').textContent = formatTime(audio.duration);
+    });
+    
     updateTrackInfo();
     console.log(`Loaded track: ${tracks[currentTrackIndex].name}`);
   } catch (error) {
@@ -549,8 +554,11 @@ async function initPlayer() {
 function updateTrackInfo() {
     currentTrackDisplay.textContent = `${currentTrackIndex + 1}/${tracks.length}: ${tracks[currentTrackIndex].name}`;
     document.getElementById('current-time').textContent = "0:00";
-    document.getElementById('total-time').textContent = "0:00";
     document.getElementById('progress-bar').value = 0;
+    
+    document.getElementById('total-time').textContent = "0:00";
+    
+    audio.addEventListener('timeupdate', updateProgress);
 }
 
 function updateProgress() {
@@ -558,9 +566,21 @@ function updateProgress() {
         const progressPercent = (audio.currentTime / audio.duration) * 100;
         document.getElementById('progress-bar').value = progressPercent;
         document.getElementById('current-time').textContent = formatTime(audio.currentTime);
+        
+        if (document.getElementById('total-time').textContent === "0:00" && !isNaN(audio.duration)) {
+            document.getElementById('total-time').textContent = formatTime(audio.duration);
+        }
     }
 }
 
+audio.addEventListener('durationchange', function() {
+    if (!isNaN(audio.duration) && audio.duration !== Infinity) {
+        document.getElementById('total-time').textContent = formatTime(audio.duration);
+    } else {
+        document.getElementById('total-time').textContent = "--:--";
+    }
+});
+	
 function seekTrack(e) {
     isSeeking = true;
     const seekTime = (e.target.value / 100) * (audio.duration || 0);
