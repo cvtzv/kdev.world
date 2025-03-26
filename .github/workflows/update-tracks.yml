@@ -3,7 +3,7 @@ name: Update Tracks List
 on:
   push:
     paths:
-      - '/src/music/**'
+      - 'src/tracks/**'  # Изменили путь
 
 jobs:
   update-tracks:
@@ -12,23 +12,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Cache jq
-        uses: actions/cache@v3
-        with:
-          path: /var/cache/apt/archives
-          key: ${{ runner.os }}-jq
-      
       - name: Pull latest changes
         run: git pull
-      
-      - name: Install jq
-        run: sudo apt-get install -y jq
       
       - name: Generate tracks.json
         run: |
           echo '[' > tracks.json
           
-          find src/music -type f \( -iname "*.mp3" -o -iname "*.wav" \) | while read -r file; do
+          find src/tracks -type f \( -iname "*.mp3" -o -iname "*.wav" \) | while read -r file; do
             filename=$(basename "$file")
             name="${filename%.*}"
             name=$(echo "$name" | sed -e 's/[\\\/\:\*\?\"\<\>\|]/_/g')
