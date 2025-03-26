@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>kdev.world - portfolio</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -430,17 +431,39 @@ let tracks = [];
 async function loadTracks() {
   try {
     const response = await fetch('/src/tracks/tracks.json?t=' + Date.now());
-    tracks = await response.json();
     
-    if (tracks.length === 0) {
-      console.warn("No tracks found. Using fallback.");
-      tracks = [{ name: "Fallback Track", src: "/src/tracks/fallback.mp3" }];
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
     }
     
-    initPlayer();
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new TypeError('Response is not JSON');
+    }
+    
+    tracks = await response.json();
+    
+    if (!Array.isArray(tracks) || tracks.length === 0) {
+      throw new Error('Empty or invalid tracks array');
+    }
+    
+    console.log('Successfully loaded tracks:', tracks);
   } catch (error) {
-    console.error("Failed to load tracks:", error);
-    tracks = [{ name: "Error Track", src: "/src/tracks/error.mp3" }];
+    console.error('Failed to load tracks:', error);
+    
+    tracks = [
+      {
+        name: "Fallback Track 1",
+        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      },
+      {
+        name: "Fallback Track 2",
+        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+      }
+    ];
+    
+    console.log('Using fallback tracks:', tracks);
+  } finally {
     initPlayer();
   }
 }
@@ -488,25 +511,28 @@ window.addEventListener('resize', () => {
     }
 });
 
-function initPlayer() {
-    audio.src = tracks[currentTrackIndex].src;
-    audio.volume = volumeControl.value / 100;
+async function initPlayer() {
+  if (!tracks.length) return;
+  
+  const trackExists = await checkTrackExists(tracks[currentTrackIndex].src);
+  
+  if (!trackExists) {
+    console.warn(`Track not found: ${tracks[currentTrackIndex].src}`);
+    nextTrack();
+    return;
+  }
+  
+  audio.src = tracks[currentTrackIndex].src;
+  audio.volume = volumeControl.value / 100;
+  
+  try {
+    await audio.load();
     updateTrackInfo();
-    
-    audio.addEventListener('loadedmetadata', function() {
-        document.getElementById('total-time').textContent = formatTime(audio.duration);
-    });
-    
-    audio.addEventListener('timeupdate', updateProgress);
-    
-    audio.addEventListener('ended', () => {
-        if (isRepeatOn) {
-            audio.currentTime = 0;
-            audio.play();
-        } else {
-            nextTrack();
-        }
-    });
+    console.log(`Loaded track: ${tracks[currentTrackIndex].name}`);
+  } catch (error) {
+    console.error('Error loading audio:', error);
+    nextTrack();
+  }
 }
 
 function updateTrackInfo() {
@@ -555,16 +581,39 @@ function simulateLoading() {
 }
 
 function startMusic() {
-    audio.play()
-        .then(() => {
-            isMusicPlaying = true;
-            playPauseIcon.classList.remove('fa-play');
-            playPauseIcon.classList.add('fa-pause');
-        })
-        .catch(e => {
-            console.log("Autoplay prevented. User needs to interact first.");
-            musicToggle.style.display = 'flex';
-        });
+  audio.volume = 0.1;
+  
+  const playPromise = audio.play();
+  
+  if (playPromise !== undefined) {
+    playPromise
+      .then(() => {
+        isMusicPlaying = true;
+        playPauseIcon.classList.remove('fa-play');
+        playPauseIcon.classList.add('fa-pause');
+      })
+      .catch(error => {
+        console.log("Autoplay prevented. Showing music controls.");
+        musicToggle.style.display = 'flex';
+        
+        const notification = document.createElement('div');
+        notification.textContent = 'Кликните для воспроизведения музыки';
+        notification.style.position = 'fixed';
+        notification.style.bottom = '80px';
+        notification.style.right = '20px';
+        notification.style.background = 'rgba(30,41,59,0.9)';
+        notification.style.padding = '10px';
+        notification.style.borderRadius = '5px';
+        notification.style.zIndex = '1002';
+        notification.id = 'music-notification';
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+          const notif = document.getElementById('music-notification');
+          if (notif) notif.remove();
+        }, 5000);
+      });
+  }
 }
 
 function togglePlay() {
@@ -654,6 +703,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     });
 
+document.addEventListener('click', () => {
+  if (!isMusicPlaying && audio.paused) {
+    startMusic();
+  }
+}, { once: true });
+	
     volumeControl.addEventListener('input', () => {
         audio.volume = volumeControl.value / 100;
     });
