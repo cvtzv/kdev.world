@@ -42,38 +42,6 @@
             border: 1px solid rgba(255, 255, 255, 0.125);
         }
 
-        #loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-primary);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s;
-        }
-
-        .loader-bar {
-            width: 80%;
-            max-width: 300px;
-            height: 8px;
-            background-color: #334155;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        .loader-progress {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-            transition: width 1s ease;
-        }
-
         #music-controls {
             position: fixed;
             bottom: 20px;
@@ -180,6 +148,115 @@
             cursor: pointer;
         }
 
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .loader-content {
+            text-align: center;
+            transform: translateY(-20px);
+        }
+
+        .loader-logo {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-primary);
+            text-shadow: 0 0 15px rgba(110, 231, 183, 0.5);
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .loader-bar-container {
+            width: 80%;
+            max-width: 300px;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .loader-text {
+            color: var(--text-primary);
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        #join-btn {
+            margin-top: 2rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            padding: 12px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #join-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        #join-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+        }
+
+        #join-btn:hover::after {
+            transform: translateX(0);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .loader-content > * {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .loader-content .loader-logo {
+            animation-delay: 0.1s;
+        }
+
+        .loader-content .loader-text {
+            animation-delay: 0.3s;
+        }
+
+        .loader-content .loader-bar-container {
+            animation-delay: 0.5s;
+        }
+
+        .loader-content #join-btn {
+            animation-delay: 0.7s;
+        }
+
         @media (max-width: 768px) {
             .profile-banner {
                 height: 150px;
@@ -214,12 +291,18 @@
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
     <div id="loader">
-        <div class="loader-bar">
-            <div id="progress" class="loader-progress"></div>
+        <div class="loader-content">
+            <div class="loader-logo">квт)</div>
+            <p class="loader-text">Загрузка портфолио...</p>
+            <div class="loader-bar-container">
+                <div class="loader-bar">
+                    <div id="progress" class="loader-progress"></div>
+                </div>
+            </div>
+            <button id="join-btn" class="mt-6">
+                кликни
+            </button>
         </div>
-        <button id="join-btn" class="mt-6 bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-8 py-3 rounded-full hover:opacity-90 transition-all shadow-lg">
-            кликни
-        </button>
     </div>
 
     <div id="music-toggle" onclick="toggleMusicControls()">
