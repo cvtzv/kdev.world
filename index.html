@@ -443,14 +443,12 @@ const playPauseIcon = document.getElementById('play-pause-icon');
 const musicControls = document.getElementById('music-controls');
 const currentTrackDisplay = document.getElementById('current-track');
 const musicToggle = document.getElementById('music-toggle');
-	
+
 async function loadTracks() {
   try {
     const response = await fetch('tracks.json?t=' + Date.now());
     
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
+    if (!response.ok) throw new Error('Network response was not ok');
     
     const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
@@ -462,28 +460,13 @@ async function loadTracks() {
     if (!Array.isArray(tracks) || tracks.length === 0) {
       throw new Error('Empty or invalid tracks array');
     }
-    
-    console.log('Successfully loaded tracks:', tracks);
   } catch (error) {
     console.error('Failed to load tracks:', error);
-    
-    tracks = [
-      {
-        "name": "Юпи - Никогда не умел",
-        "src": "/src/tracks/Юпи - Никогда не умел.mp3"
-      }
-    ];
-    
-    console.log('Using fallback tracks:', tracks);
+    tracks = [{ "name": "Юпи - Никогда не умел", "src": "/src/tracks/Юпи - Никогда не умел.mp3" }];
   } finally {
     initPlayer();
   }
 }
-
-audio.addEventListener('error', function() {
-  console.error('Audio error:', audio.error);
-  nextTrack();
-});
 
 function formatTime(seconds) {
     if (isNaN(seconds)) return "0:00";
@@ -492,32 +475,28 @@ function formatTime(seconds) {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
 }
 
-    function toggleMusicControls() {
-        isMusicControlsVisible = !isMusicControlsVisible;
-        if (isMusicControlsVisible) {
-            musicControls.classList.add('active');
-            musicToggle.classList.add('active');
-        } else {
-            musicControls.classList.remove('active');
-            musicToggle.classList.remove('active');
-        }
-    }
+function toggleMusicControls() {
+    isMusicControlsVisible = !isMusicControlsVisible;
+    musicControls.classList.toggle('active', isMusicControlsVisible);
+    musicToggle.classList.toggle('active', isMusicControlsVisible);
+}
 
-window.addEventListener('resize', () => {
-    if (window.innerWidth > 768) {
-        musicToggle.style.bottom = "20px";
-    } else if (isMusicControlsVisible) {
-        musicToggle.style.bottom = "calc(100% + 20px)";
-    }
-});
+async function checkTrackExists(url) {
+  try {
+    if (url.startsWith('http')) return true;
+    const response = await fetch(url, { method: 'HEAD' });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
 
 function nextTrack() {
     let newIndex;
     if (isShuffleOn) {
-        newIndex = Math.floor(Math.random() * tracks.length);
-        while (newIndex === currentTrackIndex && tracks.length > 1) {
+        do {
             newIndex = Math.floor(Math.random() * tracks.length);
-        }
+        } while (newIndex === currentTrackIndex && tracks.length > 1);
     } else {
         newIndex = (currentTrackIndex + 1) % tracks.length;
     }
@@ -527,10 +506,9 @@ function nextTrack() {
 function prevTrack() {
     let newIndex;
     if (isShuffleOn) {
-        newIndex = Math.floor(Math.random() * tracks.length);
-        while (newIndex === currentTrackIndex && tracks.length > 1) {
+        do {
             newIndex = Math.floor(Math.random() * tracks.length);
-        }
+        } while (newIndex === currentTrackIndex && tracks.length > 1);
     } else {
         newIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
     }
@@ -542,42 +520,17 @@ function changeTrack(index) {
     initPlayer();
 }
 
-function togglePlay() {
-    if (audio.paused) {
-        const playPromise = audio.play();
-        playPromise.then(() => {
-            isMusicPlaying = true;
-            playPauseIcon.classList.remove('fa-play');
-            playPauseIcon.classList.add('fa-pause');
-        }).catch(e => {
-            console.log("Play failed:", e);
-            isMusicPlaying = false;
-            playPauseIcon.classList.remove('fa-pause');
-            playPauseIcon.classList.add('fa-play');
-        });
-    } else {
-        audio.pause();
-        playPauseIcon.classList.remove('fa-pause');
-        playPauseIcon.classList.add('fa-play');
-        isMusicPlaying = false;
-    }
-}
-
-// Инициализация плеера
 async function initPlayer() {
     if (!tracks.length) return;
     
-    // Очищаем предыдущие обработчики
     audio.removeEventListener('ended', handleTrackEnd);
     audio.removeEventListener('timeupdate', updateProgress);
     audio.removeEventListener('loadedmetadata', updateDuration);
 
     const trackExists = await checkTrackExists(tracks[currentTrackIndex].src);
-    
     if (!trackExists) {
         console.warn(`Track not found: ${tracks[currentTrackIndex].src}`);
-        nextTrack();
-        return;
+        return nextTrack();
     }
     
     audio.src = tracks[currentTrackIndex].src;
@@ -586,17 +539,14 @@ async function initPlayer() {
     try {
         await audio.load();
         
-        // Добавляем обработчики событий
         audio.addEventListener('loadedmetadata', updateDuration);
         audio.addEventListener('timeupdate', updateProgress);
         audio.addEventListener('ended', handleTrackEnd);
         
         updateTrackInfo();
-        console.log(`Loaded track: ${tracks[currentTrackIndex].name}`);
         
-        // Автовоспроизведение, если музыка уже играла
         if (isMusicPlaying) {
-            audio.play().catch(e => console.log("Autoplay prevented:", e));
+            await audio.play();
         }
     } catch (error) {
         console.error('Error loading audio:', error);
@@ -607,16 +557,15 @@ async function initPlayer() {
 function handleTrackEnd() {
     if (isRepeatOn) {
         audio.currentTime = 0;
-        audio.play().catch(e => console.log("Repeat play failed:", e));
+        audio.play().catch(console.error);
     } else {
         nextTrack();
     }
 }
 
-// Остальные вспомогательные функции
 function updateDuration() {
     const totalTimeElement = document.getElementById('total-time');
-    if (!isNaN(audio.duration) {
+    if (!isNaN(audio.duration)) {
         totalTimeElement.textContent = formatTime(audio.duration);
     }
 }
@@ -625,10 +574,7 @@ function updateTrackInfo() {
     currentTrackDisplay.textContent = `${currentTrackIndex + 1}/${tracks.length}: ${tracks[currentTrackIndex].name}`;
     document.getElementById('current-time').textContent = "0:00";
     document.getElementById('progress-bar').value = 0;
-    
-    // Обновляем иконку play/pause
-    playPauseIcon.classList.remove('fa-play', 'fa-pause');
-    playPauseIcon.classList.add(isMusicPlaying ? 'fa-pause' : 'fa-play');
+    playPauseIcon.className = isMusicPlaying ? 'fas fa-pause' : 'fas fa-play';
 }
 
 function updateProgress() {
@@ -652,37 +598,34 @@ function seekTrack(e) {
             audio.currentTime = seekTime;
         }
         isSeeking = false;
-        e.target.removeEventListener('mouseup', handleSeekEnd);
-        e.target.removeEventListener('touchend', handleSeekEnd);
     };
     
-    e.target.addEventListener('mouseup', handleSeekEnd);
-    e.target.addEventListener('touchend', handleSeekEnd);
+    e.target.addEventListener('mouseup', handleSeekEnd, { once: true });
+    e.target.addEventListener('touchend', handleSeekEnd, { once: true });
 }
 
 function togglePlay() {
-  if (audio.paused) {
-    audio.play()
-      .then(() => {
-        isMusicPlaying = true;
-        playPauseIcon.classList.remove('fa-play');
-        playPauseIcon.classList.add('fa-pause');
-      })
-      .catch(e => {
-        console.log("Play failed:", e);
+    if (audio.paused) {
+        audio.play()
+            .then(() => {
+                isMusicPlaying = true;
+                playPauseIcon.className = 'fas fa-pause';
+            })
+            .catch(e => {
+                console.error("Play failed:", e);
+                isMusicPlaying = false;
+                playPauseIcon.className = 'fas fa-play';
+            });
+    } else {
+        audio.pause();
         isMusicPlaying = false;
-        playPauseIcon.classList.remove('fa-pause');
-        playPauseIcon.classList.add('fa-play');
-      });
-  } else {
-    audio.pause();
-    playPauseIcon.classList.remove('fa-pause');
-    playPauseIcon.classList.add('fa-play');
-    isMusicPlaying = false;
-  }
+        playPauseIcon.className = 'fas fa-play';
+    }
 }
 
-function simulateLoading() {
+document.addEventListener('DOMContentLoaded', () => {
+    loadTracks();
+    
     let progress = 0;
     const interval = setInterval(() => {
         progress += Math.random() * 15;
@@ -694,42 +637,49 @@ function simulateLoading() {
             joinBtn.style.animation = "pulse 1.5s infinite ease-in-out";
         }
     }, 300);
-}
+    
+    joinBtn.addEventListener('click', () => {
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            loader.style.display = 'none';
+            startMusic();
+        }, 500);
+    });
+
+    volumeControl.addEventListener('input', () => {
+        audio.volume = volumeControl.value / 100;
+    });
+});
 
 function startMusic() {
-  audio.volume = 0.1;
-  
-  const playPromise = audio.play();
-  
-  if (playPromise !== undefined) {
-    playPromise
-      .then(() => {
-        isMusicPlaying = true;
-        playPauseIcon.classList.remove('fa-play');
-        playPauseIcon.classList.add('fa-pause');
-      })
-      .catch(error => {
-        console.log("Autoplay prevented. Showing music controls.");
-        musicToggle.style.display = 'flex';
-        
-        const notification = document.createElement('div');
-        notification.textContent = 'Кликните для воспроизведения музыки';
-        notification.style.position = 'fixed';
-        notification.style.bottom = '80px';
-        notification.style.right = '20px';
-        notification.style.background = 'rgba(30,41,59,0.9)';
-        notification.style.padding = '10px';
-        notification.style.borderRadius = '5px';
-        notification.style.zIndex = '1002';
-        notification.id = 'music-notification';
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-          const notif = document.getElementById('music-notification');
-          if (notif) notif.remove();
-        }, 5000);
-      });
-  }
+    audio.volume = 0.1;
+    const playPromise = audio.play();
+    
+    if (playPromise !== undefined) {
+        playPromise
+            .then(() => {
+                isMusicPlaying = true;
+                playPauseIcon.className = 'fas fa-pause';
+            })
+            .catch(error => {
+                console.log("Autoplay prevented. Showing music controls.");
+                musicToggle.style.display = 'flex';
+                
+                const notification = document.createElement('div');
+                notification.textContent = 'Кликните для воспроизведения музыки';
+                notification.style.position = 'fixed';
+                notification.style.bottom = '80px';
+                notification.style.right = '20px';
+                notification.style.background = 'rgba(30,41,59,0.9)';
+                notification.style.padding = '10px';
+                notification.style.borderRadius = '5px';
+                notification.style.zIndex = '1002';
+                notification.id = 'music-notification';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => notification.remove(), 5000);
+            });
+    }
 }
 
 function toggleShuffle() {
@@ -742,41 +692,9 @@ function toggleRepeat() {
     document.getElementById('repeat-icon').style.color = isRepeatOn ? 'var(--accent-primary)' : 'white';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadTracks();
-    
-    const skillBars = document.querySelectorAll('.skill-progress');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const bar = entry.target;
-                const width = bar.getAttribute('data-width');
-                bar.style.width = width;
-            }
-        });
-    }, { threshold: 0.1 });
-
-    skillBars.forEach(bar => observer.observe(bar));
-
-    simulateLoading();
-    
-    joinBtn.addEventListener('click', () => {
-        loader.style.opacity = '0';
-        setTimeout(() => {
-            loader.style.display = 'none';
-            startMusic();
-        }, 500);
-    });
-
-    document.addEventListener('click', () => {
-      if (!isMusicPlaying && audio.paused) {
-        startMusic();
-      }
-    }, { once: true });
-    
-    volumeControl.addEventListener('input', () => {
-        audio.volume = volumeControl.value / 100;
-    });
+audio.addEventListener('error', function() {
+    console.error('Audio error:', audio.error);
+    nextTrack();
 });
 </script>
 </body>
