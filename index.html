@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
-			user-select: none;
+	    user-select: none;
             -webkit-tap-highlight-color: transparent;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -114,6 +114,30 @@
             transform: scale(0.95);
         }
 
+	#progress-bar {
+            -webkit-appearance: none;
+            height: 4px;
+            background: #334155;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+	#progress-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+	#progress-bar:hover::-webkit-slider-thumb {
+            opacity: 1;
+        }
+
         .hover-card {
             transition: all 0.3s ease;
         }
@@ -203,7 +227,7 @@
     </div>
 
 <div id="music-controls">
-    <div class="flex justify-between items-center mb-4">
+    <div class="flex justify-between items-center mb-3">
         <span class="font-bold text-emerald-400">Сейчас играет</span>
         <div class="flex items-center space-x-3">
             <button onclick="toggleShuffle()" class="text-white hover:text-emerald-400 transition-colors" title="Перемешать">
@@ -224,21 +248,19 @@
         </div>
     </div>
     
-    <div class="mt-3 mb-2">
-        <input type="range" id="progress-bar" value="0" class="w-full h-1 bg-gray-700 rounded-full" oninput="seekTrack(event)">
+    <div class="mb-2">
+        <input type="range" id="progress-bar" value="0" class="w-full h-1 bg-gray-700 rounded-full appearance-none cursor-pointer" oninput="seekTrack(event)">
     </div>
-    
     <div class="flex justify-between text-xs text-gray-400 mb-3">
         <span id="current-time">0:00</span>
         <span id="total-time">0:00</span>
     </div>
     
-    <div class="flex items-center space-x-3 mb-2">
+    <div class="flex items-center space-x-3">
         <i class="fas fa-volume-down text-white text-sm"></i>
         <input type="range" id="volume-control" min="0" max="100" value="50" class="volume-slider flex-1">
         <i class="fas fa-volume-up text-white text-sm"></i>
     </div>
-    
     <div class="mt-2 text-center text-sm text-gray-400 truncate" id="current-track">Загрузка трека...</div>
 </div>
 
@@ -317,188 +339,232 @@
     </div>
 
 <script>
-    const tracks = [
-        {
-            name: "Ambient Loop",
-            src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-        },
-        {
-            name: "9mice - Anora",
-            src: "/src/tracks/9mice - Anora.mp3"
-        },
-        {
-            name: "zxcursed - lyin n' dyin",
-            src: "/src/tracks/zxcursed - lyin n' dyin.mp3"
-        },
-        {
-            name: "Юпи - Вдыхаю",
-            src: "/src/tracks/Юпи - Вдыхаю.mp3"
-        },
-        {
-            name: "Юпи - Никогда не умел",
-            src: "/src/tracks/Юпи - Никогда не умел.mp3"
-        },
-        {
-            name: "тёмный принц, tewiq, FORTUNA 812 - ПАПА",
-            src: "/src/tracks/тёмный принц, tewiq, FORTUNA 812 - ПАПА.mp3"
-        },
-    ];
-        
-    let currentTrackIndex = 0;
-    let audio = new Audio();
-    let isMusicPlaying = false;
-    let isMusicControlsVisible = false;
-    let isShuffleOn = false;
-    let isRepeatOn = false;
+const tracks = [
+    {
+        name: "Ambient Loop",
+        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+    },
+    {
+        name: "9mice - Anora",
+        src: "/src/tracks/9mice - Anora.mp3"
+    },
+    {
+        name: "zxcursed - lyin n' dyin",
+        src: "/src/tracks/zxcursed - lyin n' dyin.mp3"
+    },
+    {
+        name: "Юпи - Вдыхаю",
+        src: "/src/tracks/Юпи - Вдыхаю.mp3"
+    },
+    {
+        name: "Юпи - Никогда не умел",
+        src: "/src/tracks/Юпи - Никогда не умел.mp3"
+    },
+    {
+        name: "тёмный принц, tewiq, FORTUNA 812 - ПАПА",
+        src: "/src/tracks/тёмный принц, tewiq, FORTUNA 812 - ПАПА.mp3"
+    },
+];
 
-    const loader = document.getElementById('loader');
-    const progressBar = document.getElementById('progress');
-    const joinBtn = document.getElementById('join-btn');
-    const volumeControl = document.getElementById('volume-control');
-    const playPauseIcon = document.getElementById('play-pause-icon');
-    const musicControls = document.getElementById('music-controls');
-    const currentTrackDisplay = document.getElementById('current-track');
-    const musicToggle = document.getElementById('music-toggle');
+let currentTrackIndex = 0;
+let audio = new Audio();
+let isMusicPlaying = false;
+let isMusicControlsVisible = false;
+let isShuffleOn = false;
+let isRepeatOn = false;
+let isSeeking = false;
 
-    function toggleMusicControls() {
-        isMusicControlsVisible = !isMusicControlsVisible;
-        musicControls.classList.toggle('active');
+const loader = document.getElementById('loader');
+const progressBar = document.getElementById('progress');
+const joinBtn = document.getElementById('join-btn');
+const volumeControl = document.getElementById('volume-control');
+const playPauseIcon = document.getElementById('play-pause-icon');
+const musicControls = document.getElementById('music-controls');
+const currentTrackDisplay = document.getElementById('current-track');
+const musicToggle = document.getElementById('music-toggle');
+
+function formatTime(seconds) {
+    if (isNaN(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+function toggleMusicControls() {
+    isMusicControlsVisible = !isMusicControlsVisible;
+    musicControls.classList.toggle('active');
+}
+
+function initPlayer() {
+    audio.src = tracks[currentTrackIndex].src;
+    audio.volume = volumeControl.value / 100;
+    updateTrackInfo();
+    
+    audio.addEventListener('loadedmetadata', function() {
+        document.getElementById('total-time').textContent = formatTime(audio.duration);
+    });
+    
+    audio.addEventListener('timeupdate', updateProgress);
+    
+    audio.addEventListener('ended', () => {
+        if (isRepeatOn) {
+            audio.currentTime = 0;
+            audio.play();
+        } else {
+            nextTrack();
+        }
+    });
+}
+
+function updateTrackInfo() {
+    currentTrackDisplay.textContent = `${currentTrackIndex + 1}/${tracks.length}: ${tracks[currentTrackIndex].name}`;
+    document.getElementById('current-time').textContent = "0:00";
+    document.getElementById('total-time').textContent = "0:00";
+    document.getElementById('progress-bar').value = 0;
+}
+
+function updateProgress() {
+    if (!isSeeking && audio.duration) {
+        const progressPercent = (audio.currentTime / audio.duration) * 100;
+        document.getElementById('progress-bar').value = progressPercent;
+        document.getElementById('current-time').textContent = formatTime(audio.currentTime);
     }
+}
 
-    function initPlayer() {
-        audio.src = tracks[currentTrackIndex].src;
-        audio.volume = volumeControl.value / 100;
-        updateTrackInfo();
-        
-        audio.addEventListener('ended', () => {
-            if (isRepeatOn) {
-                audio.currentTime = 0;
-                audio.play();
-            } else {
-                nextTrack();
-            }
+function seekTrack(e) {
+    isSeeking = true;
+    const seekTime = (e.target.value / 100) * audio.duration;
+    document.getElementById('current-time').textContent = formatTime(seekTime);
+    
+    const handleSeekEnd = () => {
+        audio.currentTime = seekTime;
+        isSeeking = false;
+        e.target.removeEventListener('mouseup', handleSeekEnd);
+        e.target.removeEventListener('touchend', handleSeekEnd);
+    };
+    
+    e.target.addEventListener('mouseup', handleSeekEnd);
+    e.target.addEventListener('touchend', handleSeekEnd);
+}
+
+function simulateLoading() {
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress > 100) progress = 100;
+        progressBar.style.width = `${progress}%`;
+
+        if (progress >= 100) {
+            clearInterval(interval);
+            joinBtn.classList.add('animate-pulse');
+        }
+    }, 300);
+}
+
+function startMusic() {
+    audio.play()
+        .then(() => {
+            isMusicPlaying = true;
+            playPauseIcon.classList.remove('fa-play');
+            playPauseIcon.classList.add('fa-pause');
+        })
+        .catch(e => {
+            console.log("Autoplay prevented. User needs to interact first.");
+            musicToggle.style.display = 'flex';
         });
-    }
+}
 
-    function updateTrackInfo() {
-        currentTrackDisplay.textContent = `${currentTrackIndex + 1}/${tracks.length}: ${tracks[currentTrackIndex].name}`;
-    }
-
-    function simulateLoading() {
-        let progress = 0;
-        const interval = setInterval(() => {
-            progress += Math.random() * 15;
-            if (progress > 100) progress = 100;
-            progressBar.style.width = `${progress}%`;
-
-            if (progress >= 100) {
-                clearInterval(interval);
-                joinBtn.classList.add('animate-pulse');
-            }
-        }, 300);
-    }
-
-    function startMusic() {
+function togglePlay() {
+    if (audio.paused) {
         audio.play()
             .then(() => {
                 isMusicPlaying = true;
                 playPauseIcon.classList.remove('fa-play');
                 playPauseIcon.classList.add('fa-pause');
-            })
-            .catch(e => {
-                console.log("Autoplay prevented. User needs to interact first.");
-                musicToggle.style.display = 'flex';
             });
+    } else {
+        audio.pause();
+        playPauseIcon.classList.remove('fa-pause');
+        playPauseIcon.classList.add('fa-play');
+        isMusicPlaying = false;
     }
+}
 
-    function togglePlay() {
-        if (audio.paused) {
-            audio.play();
-            playPauseIcon.classList.remove('fa-play');
-            playPauseIcon.classList.add('fa-pause');
-            isMusicPlaying = true;
-        } else {
-            audio.pause();
-            playPauseIcon.classList.remove('fa-pause');
-            playPauseIcon.classList.add('fa-play');
-            isMusicPlaying = false;
-        }
+function changeTrack(index) {
+    currentTrackIndex = index;
+    audio.src = tracks[currentTrackIndex].src;
+    updateTrackInfo();
+    if (isMusicPlaying) {
+        audio.play();
     }
+}
 
-    function nextTrack() {
-        let newIndex;
-        if (isShuffleOn) {
+function nextTrack() {
+    let newIndex;
+    if (isShuffleOn) {
+        newIndex = Math.floor(Math.random() * tracks.length);
+        while (newIndex === currentTrackIndex && tracks.length > 1) {
             newIndex = Math.floor(Math.random() * tracks.length);
-            while (newIndex === currentTrackIndex && tracks.length > 1) {
-                newIndex = Math.floor(Math.random() * tracks.length);
-            }
-        } else {
-            newIndex = (currentTrackIndex + 1) % tracks.length;
         }
-        changeTrack(newIndex);
+    } else {
+        newIndex = (currentTrackIndex + 1) % tracks.length;
     }
+    changeTrack(newIndex);
+}
 
-    function prevTrack() {
-        let newIndex;
-        if (isShuffleOn) {
+function prevTrack() {
+    let newIndex;
+    if (isShuffleOn) {
+        newIndex = Math.floor(Math.random() * tracks.length);
+        while (newIndex === currentTrackIndex && tracks.length > 1) {
             newIndex = Math.floor(Math.random() * tracks.length);
-            while (newIndex === currentTrackIndex && tracks.length > 1) {
-                newIndex = Math.floor(Math.random() * tracks.length);
+        }
+    } else {
+        newIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+    }
+    changeTrack(newIndex);
+}
+
+function toggleShuffle() {
+    isShuffleOn = !isShuffleOn;
+    document.getElementById('shuffle-icon').style.color = isShuffleOn ? 'var(--accent-primary)' : 'white';
+}
+
+function toggleRepeat() {
+    isRepeatOn = !isRepeatOn;
+    document.getElementById('repeat-icon').style.color = isRepeatOn ? 'var(--accent-primary)' : 'white';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initPlayer();
+    
+    const skillBars = document.querySelectorAll('.skill-progress');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const bar = entry.target;
+                const width = bar.getAttribute('data-width');
+                bar.style.width = width;
             }
-        } else {
-            newIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
-        }
-        changeTrack(newIndex);
-    }
-
-    function changeTrack(index) {
-        currentTrackIndex = index;
-        audio.src = tracks[currentTrackIndex].src;
-        updateTrackInfo();
-        if (isMusicPlaying) {
-            audio.play();
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        initPlayer();
-        
-        const skillBars = document.querySelectorAll('.skill-progress');
-        const observerOptions = {
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const bar = entry.target;
-                    const width = bar.getAttribute('data-width');
-                    bar.style.width = width;
-                }
-            });
-        }, observerOptions);
-
-        skillBars.forEach(bar => {
-            observer.observe(bar);
         });
+    }, { threshold: 0.1 });
 
-        simulateLoading();
-        
-        // Обработчик кнопки Join
-        joinBtn.addEventListener('click', () => {
-            loader.style.opacity = '0';
-            setTimeout(() => {
-                loader.style.display = 'none';
-                startMusic();
-            }, 500);
-        });
+    skillBars.forEach(bar => observer.observe(bar));
 
-        // Обработчик громкости
-        volumeControl.addEventListener('input', () => {
-            audio.volume = volumeControl.value / 100;
-        });
+    simulateLoading();
+    
+    joinBtn.addEventListener('click', () => {
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            loader.style.display = 'none';
+            startMusic();
+        }, 500);
     });
-</script>
+
+    volumeControl.addEventListener('input', () => {
+        audio.volume = volumeControl.value / 100;
+    });
+});
 </script>
 </body>
 </html>
