@@ -1,0 +1,38 @@
+name: Update Music Tracks
+
+on:
+  push:
+    paths:
+      - 'src/tracks/*.mp3'       # Триггерится при изменении MP3-файлов
+      - 'src/tracks/*.wav'       # Или WAV-файлов
+
+jobs:
+  update_tracks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate tracks.json
+        run: |
+          # Создаем массив в формате JSON
+          echo '[' > src/tracks/tracks.json
+          
+          # Ищем все MP3/WAV файлы и формируем записи
+          find src/tracks -type f \( -iname "*.mp3" -o -iname "*.wav" \) | while read -r file; do
+            filename=$(basename "$file")
+            name="${filename%.*}"                   # Удаляем расширение
+            name=$(echo "$name" | sed 's/[-_]/ /g') # Заменяем _ и - на пробелы
+            echo "  {\"name\": \"$name\", \"src\": \"$file\"}," >> src/tracks/tracks.json
+          done
+          
+          # Удаляем последнюю запятую и закрываем массив
+          sed -i '$ s/,$//' src/tracks/tracks.json
+          echo ']' >> src/tracks/tracks.json
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add src/tracks/tracks.json
+          git commit -m "Auto-update: tracks.json"
+          git push
