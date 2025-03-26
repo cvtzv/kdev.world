@@ -3,7 +3,7 @@ name: Update Tracks List
 on:
   push:
     paths:
-      - 'src/music/**'
+      - '/src/music/**'
 
 jobs:
   update-tracks:
