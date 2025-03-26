@@ -44,20 +44,25 @@
 
         #music-controls {
             position: fixed;
-            bottom: 20px;
-            right: -320px;
+            bottom: 80px;
+            right: 20px;
             width: 300px;
             background-color: rgba(30, 41, 59, 0.95);
-            border-radius: 12px 0 0 12px;
+            border-radius: 12px;
             padding: 15px;
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translateY(calc(100% + 100px));
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             z-index: 1000;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.1);
+            pointer-events: none;
         }
 
         #music-controls.active {
-            transform: translateX(-320px);
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
         }
 
         #music-toggle {
@@ -75,14 +80,18 @@
             cursor: pointer;
             z-index: 1001;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
         }
 
-        #music-toggle:active {
-            transform: scale(0.95);
+        #music-toggle i {
+            transition: transform 0.3s ease;
         }
 
-	#progress-bar {
+        #music-toggle.active i {
+            transform: rotate(180deg);
+        }
+
+		#progress-bar {
             -webkit-appearance: none;
             height: 4px;
             background: #334155;
@@ -91,7 +100,7 @@
             cursor: pointer;
         }
 
-	#progress-bar::-webkit-slider-thumb {
+		#progress-bar::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 12px;
             height: 12px;
@@ -102,7 +111,7 @@
             transition: opacity 0.2s;
         }
 
-	#progress-bar:hover::-webkit-slider-thumb {
+		#progress-bar:hover::-webkit-slider-thumb {
             opacity: 1;
         }
 
@@ -265,13 +274,7 @@
             #music-controls {
                 width: calc(100% - 40px);
                 right: 20px;
-                bottom: -200px;
-                transform: translateY(0);
-                border-radius: 12px;
-            }
-
-            #music-controls.active {
-                transform: translateY(-200px);
+                bottom: 80px;
             }
 
             .container {
@@ -422,32 +425,35 @@
     </div>
 
 <script>
-const tracks = [
-    {
-        name: "Ambient Loop",
-        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-    },
-    {
-        name: "9mice - Anora",
-        src: "/src/tracks/9mice - Anora.mp3"
-    },
-    {
-        name: "zxcursed - lyin n' dyin",
-        src: "/src/tracks/zxcursed - lyin n' dyin.mp3"
-    },
-    {
-        name: "Юпи - Вдыхаю",
-        src: "/src/tracks/Юпи - Вдыхаю.mp3"
-    },
-    {
-        name: "Юпи - Никогда не умел",
-        src: "/src/tracks/Юпи - Никогда не умел.mp3"
-    },
-    {
-        name: "тёмный принц, tewiq, FORTUNA 812 - ПАПА",
-        src: "/src/tracks/тёмный принц, tewiq, FORTUNA 812 - ПАПА.mp3"
-    },
-];
+let tracks = [];
+
+async function loadTracks() {
+  try {
+    const response = await fetch('/src/tracks/tracks.json?t=' + Date.now());
+    tracks = await response.json();
+    
+    if (tracks.length === 0) {
+      console.warn("No tracks found. Using fallback.");
+      tracks = [{ name: "Fallback Track", src: "/src/tracks/fallback.mp3" }];
+    }
+    
+    initPlayer();
+  } catch (error) {
+    console.error("Failed to load tracks:", error);
+    tracks = [{ name: "Error Track", src: "/src/tracks/error.mp3" }];
+    initPlayer();
+  }
+}
+
+function initPlayer() {
+  if (!tracks.length) return;
+  
+  audio.src = tracks[currentTrackIndex].src;
+  audio.load();
+  updateTrackInfo();
+  
+  console.log(`Loaded ${tracks.length} tracks. Current: ${tracks[currentTrackIndex].name}`);
+}
 
 let currentTrackIndex = 0;
 let audio = new Audio();
@@ -473,10 +479,24 @@ function formatTime(seconds) {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
 }
 
-function toggleMusicControls() {
-    isMusicControlsVisible = !isMusicControlsVisible;
-    musicControls.classList.toggle('active');
-}
+    function toggleMusicControls() {
+        isMusicControlsVisible = !isMusicControlsVisible;
+        if (isMusicControlsVisible) {
+            musicControls.classList.add('active');
+            musicToggle.classList.add('active');
+        } else {
+            musicControls.classList.remove('active');
+            musicToggle.classList.remove('active');
+        }
+    }
+
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+        musicToggle.style.bottom = "20px";
+    } else if (isMusicControlsVisible) {
+        musicToggle.style.bottom = "calc(100% + 20px)";
+    }
+});
 
 function initPlayer() {
     audio.src = tracks[currentTrackIndex].src;
@@ -618,8 +638,7 @@ function toggleRepeat() {
     document.getElementById('repeat-icon').style.color = isRepeatOn ? 'var(--accent-primary)' : 'white';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    initPlayer();
+document.addEventListener('DOMContentLoaded', loadTracks);
     
     const skillBars = document.querySelectorAll('.skill-progress');
     const observer = new IntersectionObserver((entries) => {
