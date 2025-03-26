@@ -445,16 +445,6 @@ async function loadTracks() {
   }
 }
 
-function initPlayer() {
-  if (!tracks.length) return;
-  
-  audio.src = tracks[currentTrackIndex].src;
-  audio.load();
-  updateTrackInfo();
-  
-  console.log(`Loaded ${tracks.length} tracks. Current: ${tracks[currentTrackIndex].name}`);
-}
-
 let currentTrackIndex = 0;
 let audio = new Audio();
 let isMusicPlaying = false;
@@ -638,7 +628,8 @@ function toggleRepeat() {
     document.getElementById('repeat-icon').style.color = isRepeatOn ? 'var(--accent-primary)' : 'white';
 }
 
-document.addEventListener('DOMContentLoaded', loadTracks);
+document.addEventListener('DOMContentLoaded', () => {
+    loadTracks();
     
     const skillBars = document.querySelectorAll('.skill-progress');
     const observer = new IntersectionObserver((entries) => {
