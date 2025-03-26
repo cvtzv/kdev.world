@@ -511,6 +511,46 @@ window.addEventListener('resize', () => {
     }
 });
 
+function nextTrack() {
+    let newIndex;
+    if (isShuffleOn) {
+        newIndex = Math.floor(Math.random() * tracks.length);
+        while (newIndex === currentTrackIndex && tracks.length > 1) {
+            newIndex = Math.floor(Math.random() * tracks.length);
+        }
+    } else {
+        newIndex = (currentTrackIndex + 1) % tracks.length;
+    }
+    changeTrack(newIndex);
+}
+
+function prevTrack() {
+    let newIndex;
+    if (isShuffleOn) {
+        newIndex = Math.floor(Math.random() * tracks.length);
+        while (newIndex === currentTrackIndex && tracks.length > 1) {
+            newIndex = Math.floor(Math.random() * tracks.length);
+        }
+    } else {
+        newIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+    }
+    changeTrack(newIndex);
+}
+
+function changeTrack(index) {
+    currentTrackIndex = index;
+    audio.src = tracks[currentTrackIndex].src;
+    updateTrackInfo();
+    if (isMusicPlaying) {
+        audio.play().catch(e => {
+            console.log("Autoplay on track change failed:", e);
+            isMusicPlaying = false;
+            playPauseIcon.classList.remove('fa-pause');
+            playPauseIcon.classList.add('fa-play');
+        });
+    }
+}
+	
 async function checkTrackExists(url) {
   try {
     if (url.startsWith('http')) return true;
@@ -525,10 +565,7 @@ async function checkTrackExists(url) {
 async function initPlayer() {
   if (!tracks.length) return;
   
-  // Очищаем предыдущие обработчики
   audio.removeEventListener('ended', handleTrackEnd);
-  audio.removeEventListener('timeupdate', updateProgress);
-  audio.removeEventListener('loadedmetadata', updateDuration);
 
   const trackExists = await checkTrackExists(tracks[currentTrackIndex].src);
   
@@ -536,7 +573,9 @@ async function initPlayer() {
     console.warn(`Track not found: ${tracks[currentTrackIndex].src}`);
     nextTrack();
     return;
-  }
+	  
+  audio.addEventListener('ended', handleTrackEnd);
+}
   
   audio.src = tracks[currentTrackIndex].src;
   audio.volume = volumeControl.value / 100;
@@ -544,7 +583,6 @@ async function initPlayer() {
   try {
     await audio.load();
     
-    // Добавляем обработчики событий
     audio.addEventListener('loadedmetadata', updateDuration);
     audio.addEventListener('timeupdate', updateProgress);
     audio.addEventListener('ended', handleTrackEnd);
@@ -552,7 +590,6 @@ async function initPlayer() {
     updateTrackInfo();
     console.log(`Loaded track: ${tracks[currentTrackIndex].name}`);
     
-    // Автовоспроизведение, если музыка уже играла
     if (isMusicPlaying) {
       audio.play().catch(e => console.log("Autoplay prevented:", e));
     }
@@ -585,7 +622,6 @@ function updateTrackInfo() {
   document.getElementById('progress-bar').value = 0;
   document.getElementById('total-time').textContent = "0:00";
   
-  // Обновляем иконку play/pause
   playPauseIcon.classList.remove('fa-play', 'fa-pause');
   playPauseIcon.classList.add(isMusicPlaying ? 'fa-pause' : 'fa-play');
 }
