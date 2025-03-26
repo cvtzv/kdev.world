@@ -430,7 +430,7 @@ let tracks = [];
 
 async function loadTracks() {
   try {
-    const response = await fetch('/src/tracks.json?t=' + Date.now());
+    const response = await fetch('tracks.json?t=' + Date.now());
     
     if (!response.ok) {
       throw new Error('Network response was not ok');
@@ -451,27 +451,26 @@ async function loadTracks() {
   } catch (error) {
     console.error('Failed to load tracks:', error);
     
-    // Fallback треки с правильными путями
     tracks = [
       {
         "name": "9mice - Anora",
-        "src": "src/tracks/9mice - Anora.mp3"
+        "src": "/src/tracks/9mice - Anora.mp3"
       },
       {
         "name": "zxcursed - lyin n' dyin",
-        "src": "src/tracks/zxcursed - lyin n' dyin.mp3"
+        "src": "/src/tracks/zxcursed - lyin n' dyin.mp3"
       },
       {
         "name": "Юпи - Вдыхаю",
-        "src": "src/tracks/Юпи - Вдыхаю.mp3"
+        "src": "/src/tracks/Юпи - Вдыхаю.mp3"
       },
       {
         "name": "Юпи - Никогда не умел",
-        "src": "src/tracks/Юпи - Никогда не умел.mp3"
+        "src": "/src/tracks/Юпи - Никогда не умел.mp3"
       },
       {
         "name": "тёмный принц, tewiq, FORTUNA 812 - ПАПА",
-        "src": "src/tracks/тёмный принц, tewiq, FORTUNA 812 - ПАПА.mp3"
+        "src": "/src/tracks/тёмный принц, tewiq, FORTUNA 812 - ПАПА.mp3"
       }
     ];
     
@@ -480,6 +479,11 @@ async function loadTracks() {
     initPlayer();
   }
 }
+
+audio.addEventListener('error', function() {
+  console.error('Audio error:', audio.error);
+  nextTrack();
+});
 
 let currentTrackIndex = 0;
 let audio = new Audio();
