@@ -428,48 +428,57 @@
 <script>
 let tracks = [];
 
-async function checkTrackExists(url) {
+async function loadTracks() {
   try {
-    if (url.startsWith('http')) return true;
+    // Используем относительный путь к tracks.json
+    const response = await fetch('tracks.json?t=' + Date.now());
     
-    const response = await fetch(url, { method: 'HEAD' });
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
-	
-async function initPlayer() {
-  if (!tracks.length) return;
-  
-  try {
-    if (!tracks[currentTrackIndex].src.startsWith('http')) {
-      const trackExists = await checkTrackExists(tracks[currentTrackIndex].src);
-      if (!trackExists) {
-        console.warn(`Track not found: ${tracks[currentTrackIndex].src}`);
-        return nextTrack();
-      }
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
     }
     
-    audio.src = tracks[currentTrackIndex].src;
-    audio.volume = volumeControl.value / 100;
-    
-    audio.currentTime = 0;
-    
-    await new Promise((resolve, reject) => {
-      audio.addEventListener('loadedmetadata', resolve);
-      audio.addEventListener('error', reject);
-    });
-    
-    updateTrackInfo();
-    console.log(`Loaded track: ${tracks[currentTrackIndex].name}`);
-    
-    if (isMusicPlaying) {
-      await audio.play();
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new TypeError('Response is not JSON');
     }
+    
+    tracks = await response.json();
+    
+    if (!Array.isArray(tracks) || tracks.length === 0) {
+      throw new Error('Empty or invalid tracks array');
+    }
+    
+    console.log('Successfully loaded tracks:', tracks);
   } catch (error) {
-    console.error('Error loading audio:', error);
-    nextTrack();
+    console.error('Failed to load tracks:', error);
+    
+    // Fallback треки с правильными путями
+    tracks = [
+      {
+        "name": "9mice - Anora",
+        "src": "src/tracks/9mice - Anora.mp3"
+      },
+      {
+        "name": "zxcursed - lyin n' dyin",
+        "src": "src/tracks/zxcursed - lyin n' dyin.mp3"
+      },
+      {
+        "name": "Юпи - Вдыхаю",
+        "src": "src/tracks/Юпи - Вдыхаю.mp3"
+      },
+      {
+        "name": "Юпи - Никогда не умел",
+        "src": "src/tracks/Юпи - Никогда не умел.mp3"
+      },
+      {
+        "name": "тёмный принц, tewiq, FORTUNA 812 - ПАПА",
+        "src": "src/tracks/тёмный принц, tewiq, FORTUNA 812 - ПАПА.mp3"
+      }
+    ];
+    
+    console.log('Using fallback tracks:', tracks);
+  } finally {
+    initPlayer();
   }
 }
 
@@ -713,12 +722,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     });
 
-document.addEventListener('click', () => {
-  if (!isMusicPlaying && audio.paused) {
-    startMusic();
-  }
-}, { once: true });
-	
+    document.addEventListener('click', () => {
+      if (!isMusicPlaying && audio.paused) {
+        startMusic();
+      }
+    }, { once: true });
+    
     volumeControl.addEventListener('input', () => {
         audio.volume = volumeControl.value / 100;
     });
