@@ -202,28 +202,45 @@
         <i class="fas fa-music"></i>
     </div>
 
-    <div id="music-controls">
-        <div class="flex justify-between items-center mb-4">
-            <span class="font-bold text-emerald-400">Сейчас играет</span>
-            <div class="flex items-center space-x-4">
-                <button onclick="prevTrack()" class="text-white hover:text-emerald-400 transition-colors">
-                    <i class="fas fa-step-backward"></i>
-                </button>
-                <button onclick="togglePlay()" class="text-white hover:text-emerald-400 transition-colors">
-                    <i id="play-pause-icon" class="fas fa-pause"></i>
-                </button>
-                <button onclick="nextTrack()" class="text-white hover:text-emerald-400 transition-colors">
-                    <i class="fas fa-step-forward"></i>
-                </button>
-            </div>
+<div id="music-controls">
+    <div class="flex justify-between items-center mb-4">
+        <span class="font-bold text-emerald-400">Сейчас играет</span>
+        <div class="flex items-center space-x-3">
+            <button onclick="toggleShuffle()" class="text-white hover:text-emerald-400 transition-colors" title="Перемешать">
+                <i id="shuffle-icon" class="fas fa-random"></i>
+            </button>
+            <button onclick="prevTrack()" class="text-white hover:text-emerald-400 transition-colors" title="Предыдущий">
+                <i class="fas fa-step-backward"></i>
+            </button>
+            <button onclick="togglePlay()" class="text-white hover:text-emerald-400 transition-colors" title="Воспроизвести/Пауза">
+                <i id="play-pause-icon" class="fas fa-pause"></i>
+            </button>
+            <button onclick="nextTrack()" class="text-white hover:text-emerald-400 transition-colors" title="Следующий">
+                <i class="fas fa-step-forward"></i>
+            </button>
+            <button onclick="toggleRepeat()" class="text-white hover:text-emerald-400 transition-colors" title="Повтор">
+                <i id="repeat-icon" class="fas fa-redo"></i>
+            </button>
         </div>
-        <div class="flex items-center space-x-3 mb-2">
-            <i class="fas fa-volume-down text-white text-sm"></i>
-            <input type="range" id="volume-control" min="0" max="100" value="50" class="volume-slider flex-1">
-            <i class="fas fa-volume-up text-white text-sm"></i>
-        </div>
-        <div class="mt-2 text-center text-sm text-gray-400 truncate" id="current-track">Загрузка трека...</div>
     </div>
+    
+    <div class="mt-3 mb-2">
+        <input type="range" id="progress-bar" value="0" class="w-full h-1 bg-gray-700 rounded-full" oninput="seekTrack(event)">
+    </div>
+    
+    <div class="flex justify-between text-xs text-gray-400 mb-3">
+        <span id="current-time">0:00</span>
+        <span id="total-time">0:00</span>
+    </div>
+    
+    <div class="flex items-center space-x-3 mb-2">
+        <i class="fas fa-volume-down text-white text-sm"></i>
+        <input type="range" id="volume-control" min="0" max="100" value="50" class="volume-slider flex-1">
+        <i class="fas fa-volume-up text-white text-sm"></i>
+    </div>
+    
+    <div class="mt-2 text-center text-sm text-gray-400 truncate" id="current-track">Загрузка трека...</div>
+</div>
 
     <div class="w-full max-w-2xl gradient-bg rounded-2xl shadow-2xl overflow-hidden container glass-morphism">
         <header class="relative text-white">
@@ -304,154 +321,199 @@
             {
                 name: "Ambient Loop",
                 src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-            }
+            },
+            {
+                name: "9mice - Anora",
+                src: "/src/tracks/9mice - Anora.mp3"
+            },
+            {
+                name: "zxcursed - lyin n' dyin",
+                src: "/src/tracks/zxcursed - lyin n' dyin.mp3"
+            },
+            {
+                name: "Юпи - Вдыхаю",
+                src: "/src/tracks/Юпи - Вдыхаю.mp3"
+            },
+            {
+                name: "Юпи - Никогда не умел",
+                src: "/src/tracks/Юпи - Никогда не умел.mp3"
+            },
+            {
+                name: "тёмный принц, tewiq, FORTUNA 812 - ПАПА",
+                src: "/src/tracks/тёмный принц, tewiq, FORTUNA 812 - ПАПА.mp3"
+            },
         ];
         
-        let currentTrackIndex = 0;
-        let audio = new Audio();
-        let isMusicPlaying = false;
-        let isMusicControlsVisible = false;
+    let currentTrackIndex = 0;
+    let audio = new Audio();
+    let isMusicPlaying = false;
+    let isMusicControlsVisible = false;
+    let isShuffleOn = false;
+    let isRepeatOn = false;
 
-        const loader = document.getElementById('loader');
-        const progressBar = document.getElementById('progress');
-        const joinBtn = document.getElementById('join-btn');
-        const volumeControl = document.getElementById('volume-control');
-        const playPauseIcon = document.getElementById('play-pause-icon');
-        const musicControls = document.getElementById('music-controls');
-        const currentTrackDisplay = document.getElementById('current-track');
-        const musicToggle = document.getElementById('music-toggle');
+    const loader = document.getElementById('loader');
+    const progressBar = document.getElementById('progress');
+    const joinBtn = document.getElementById('join-btn');
+    const volumeControl = document.getElementById('volume-control');
+    const playPauseIcon = document.getElementById('play-pause-icon');
+    const musicControls = document.getElementById('music-controls');
+    const currentTrackDisplay = document.getElementById('current-track');
+    const musicToggle = document.getElementById('music-toggle');
 
-        function initPlayer() {
-            audio.src = tracks[currentTrackIndex].src;
-            audio.volume = volumeControl.value / 100;
-            currentTrackDisplay.textContent = `Track: ${tracks[currentTrackIndex].name}`;
-            
-            audio.addEventListener('ended', () => {
-                nextTrack();
-            });
-        }
-
-        function simulateLoading() {
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 15;
-                if (progress > 100) progress = 100;
-                progressBar.style.width = `${progress}%`;
-
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    joinBtn.classList.add('animate-pulse');
-                }
-            }, 300);
-        }
-
-        function startMusic() {
-            audio.play()
-                .then(() => {
-                    isMusicPlaying = true;
-                    playPauseIcon.classList.remove('fa-play');
-                    playPauseIcon.classList.add('fa-pause');
-                })
-                .catch(e => {
-                    console.log("Autoplay prevented. User needs to interact first.");
-                    musicToggle.style.display = 'flex';
-                });
-        }
-
-        joinBtn.addEventListener('click', () => {
-            loader.style.opacity = '0';
-            setTimeout(() => {
-                loader.style.display = 'none';
-                startMusic();
-            }, 500);
-        });
-
-        volumeControl.addEventListener('input', () => {
-            audio.volume = volumeControl.value / 100;
-        });
-
-        function togglePlay() {
-            if (audio.paused) {
+    // Инициализация плеера
+    function initPlayer() {
+        audio.src = tracks[currentTrackIndex].src;
+        audio.volume = volumeControl.value / 100;
+        updateTrackInfo();
+        
+        audio.addEventListener('ended', () => {
+            if (isRepeatOn) {
+                audio.currentTime = 0;
                 audio.play();
+            } else {
+                nextTrack();
+            }
+        });
+
+        audio.addEventListener('timeupdate', updateProgressBar);
+    }
+
+    // Обновление информации о треке
+    function updateTrackInfo() {
+        currentTrackDisplay.textContent = `${currentTrackIndex + 1}/${tracks.length}: ${tracks[currentTrackIndex].name}`;
+    }
+
+    // Обновление прогресс-бара
+    function updateProgressBar() {
+        const progressPercent = (audio.currentTime / audio.duration) * 100;
+        if (!isNaN(progressPercent)) {
+            document.getElementById('progress-bar').value = progressPercent;
+            document.getElementById('current-time').textContent = formatTime(audio.currentTime);
+        }
+    }
+
+    // Форматирование времени
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    // Загрузка страницы
+    function simulateLoading() {
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress > 100) progress = 100;
+            progressBar.style.width = `${progress}%`;
+
+            if (progress >= 100) {
+                clearInterval(interval);
+                joinBtn.classList.add('animate-pulse');
+            }
+        }, 300);
+    }
+
+    // Начало воспроизведения
+    function startMusic() {
+        audio.play()
+            .then(() => {
+                isMusicPlaying = true;
                 playPauseIcon.classList.remove('fa-play');
                 playPauseIcon.classList.add('fa-pause');
-                isMusicPlaying = true;
-            } else {
-                audio.pause();
-                playPauseIcon.classList.remove('fa-pause');
-                playPauseIcon.classList.add('fa-play');
-                isMusicPlaying = false;
-            }
-        }
-
-        function nextTrack() {
-            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
-            audio.src = tracks[currentTrackIndex].src;
-            currentTrackDisplay.textContent = `Трек: ${tracks[currentTrackIndex].name}`;
-            if (isMusicPlaying) {
-                audio.play();
-            }
-        }
-
-        function prevTrack() {
-            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
-            audio.src = tracks[currentTrackIndex].src;
-            currentTrackDisplay.textContent = `Трек: ${tracks[currentTrackIndex].name}`;
-            if (isMusicPlaying) {
-                audio.play();
-            }
-        }
-
-        function toggleMusicControls() {
-            if (isMusicControlsVisible) {
-                musicControls.classList.remove('active');
-            } else {
-                musicControls.classList.add('active');
-            }
-            isMusicControlsVisible = !isMusicControlsVisible;
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initPlayer();
-            
-            const skillBars = document.querySelectorAll('.skill-progress');
-            const observerOptions = {
-                threshold: 0.1
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const bar = entry.target;
-                        const width = bar.getAttribute('data-width');
-                        bar.style.width = width;
-                    }
+                // Устанавливаем общее время трека после загрузки метаданных
+                audio.addEventListener('loadedmetadata', () => {
+                    document.getElementById('total-time').textContent = formatTime(audio.duration);
                 });
-            }, observerOptions);
-
-            skillBars.forEach(bar => {
-                observer.observe(bar);
+            })
+            .catch(e => {
+                console.log("Autoplay prevented. User needs to interact first.");
+                musicToggle.style.display = 'flex';
             });
+    }
 
-            simulateLoading();
+    // Переключение треков
+    function changeTrack(index) {
+        currentTrackIndex = index;
+        audio.src = tracks[currentTrackIndex].src;
+        updateTrackInfo();
+        if (isMusicPlaying) {
+            audio.play();
+        }
+    }
+
+    // Следующий трек
+    function nextTrack() {
+        let newIndex;
+        if (isShuffleOn) {
+            newIndex = Math.floor(Math.random() * tracks.length);
+            while (newIndex === currentTrackIndex && tracks.length > 1) {
+                newIndex = Math.floor(Math.random() * tracks.length);
+            }
+        } else {
+            newIndex = (currentTrackIndex + 1) % tracks.length;
+        }
+        changeTrack(newIndex);
+    }
+
+    // Предыдущий трек
+    function prevTrack() {
+        let newIndex;
+        if (isShuffleOn) {
+            newIndex = Math.floor(Math.random() * tracks.length);
+            while (newIndex === currentTrackIndex && tracks.length > 1) {
+                newIndex = Math.floor(Math.random() * tracks.length);
+            }
+        } else {
+            newIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+        }
+        changeTrack(newIndex);
+    }
+
+    // Перемотка трека
+    function seekTrack(e) {
+        const seekTime = (e.target.value / 100) * audio.duration;
+        audio.currentTime = seekTime;
+    }
+
+    // Переключение режима повтора
+    function toggleRepeat() {
+        isRepeatOn = !isRepeatOn;
+        document.getElementById('repeat-icon').style.color = isRepeatOn ? 'var(--accent-primary)' : 'white';
+    }
+
+    // Переключение режима перемешивания
+    function toggleShuffle() {
+        isShuffleOn = !isShuffleOn;
+        document.getElementById('shuffle-icon').style.color = isShuffleOn ? 'var(--accent-primary)' : 'white';
+    }
+
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', () => {
+        initPlayer();
+        
+        // Анимация прогресс-баров навыков
+        const skillBars = document.querySelectorAll('.skill-progress');
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bar = entry.target;
+                    const width = bar.getAttribute('data-width');
+                    bar.style.width = width;
+                }
+            });
+        }, observerOptions);
+
+        skillBars.forEach(bar => {
+            observer.observe(bar);
         });
 
-        function handleResize() {
-            if (window.innerWidth <= 768) {
-                musicControls.style.right = '20px';
-                musicControls.style.bottom = '-200px';
-                musicControls.style.width = 'calc(100% - 40px)';
-                musicControls.style.borderRadius = '12px';
-            } else {
-                musicControls.style.right = '-320px';
-                musicControls.style.bottom = '20px';
-                musicControls.style.width = '300px';
-                musicControls.style.borderRadius = '12px 0 0 12px';
-            }
-        }
-
-        window.addEventListener('resize', handleResize);
-        handleResize();
-    </script>
+        simulateLoading();
+    });
+</script>
 </body>
 </html>
