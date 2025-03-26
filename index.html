@@ -525,6 +525,11 @@ async function checkTrackExists(url) {
 async function initPlayer() {
   if (!tracks.length) return;
   
+  // Очищаем предыдущие обработчики
+  audio.removeEventListener('ended', handleTrackEnd);
+  audio.removeEventListener('timeupdate', updateProgress);
+  audio.removeEventListener('loadedmetadata', updateDuration);
+
   const trackExists = await checkTrackExists(tracks[currentTrackIndex].src);
   
   if (!trackExists) {
@@ -539,67 +544,94 @@ async function initPlayer() {
   try {
     await audio.load();
     
-    audio.addEventListener('loadedmetadata', function() {
-      document.getElementById('total-time').textContent = formatTime(audio.duration);
-    });
+    // Добавляем обработчики событий
+    audio.addEventListener('loadedmetadata', updateDuration);
+    audio.addEventListener('timeupdate', updateProgress);
+    audio.addEventListener('ended', handleTrackEnd);
     
     updateTrackInfo();
     console.log(`Loaded track: ${tracks[currentTrackIndex].name}`);
+    
+    // Автовоспроизведение, если музыка уже играла
+    if (isMusicPlaying) {
+      audio.play().catch(e => console.log("Autoplay prevented:", e));
+    }
   } catch (error) {
     console.error('Error loading audio:', error);
     nextTrack();
   }
 }
 
+function handleTrackEnd() {
+  if (isRepeatOn) {
+    audio.currentTime = 0;
+    audio.play().catch(e => console.log("Repeat play failed:", e));
+  } else {
+    nextTrack();
+  }
+}
+
+function updateDuration() {
+  if (!isNaN(audio.duration) && audio.duration !== Infinity) {
+    document.getElementById('total-time').textContent = formatTime(audio.duration);
+  } else {
+    document.getElementById('total-time').textContent = "--:--";
+  }
+}
+
 function updateTrackInfo() {
-    currentTrackDisplay.textContent = `${currentTrackIndex + 1}/${tracks.length}: ${tracks[currentTrackIndex].name}`;
-    document.getElementById('current-time').textContent = "0:00";
-    document.getElementById('progress-bar').value = 0;
-    
-    document.getElementById('total-time').textContent = "0:00";
-    
-    audio.addEventListener('timeupdate', updateProgress);
+  currentTrackDisplay.textContent = `${currentTrackIndex + 1}/${tracks.length}: ${tracks[currentTrackIndex].name}`;
+  document.getElementById('current-time').textContent = "0:00";
+  document.getElementById('progress-bar').value = 0;
+  document.getElementById('total-time').textContent = "0:00";
+  
+  // Обновляем иконку play/pause
+  playPauseIcon.classList.remove('fa-play', 'fa-pause');
+  playPauseIcon.classList.add(isMusicPlaying ? 'fa-pause' : 'fa-play');
 }
 
 function updateProgress() {
-    if (!isSeeking && audio.duration) {
-        const progressPercent = (audio.currentTime / audio.duration) * 100;
-        document.getElementById('progress-bar').value = progressPercent;
-        document.getElementById('current-time').textContent = formatTime(audio.currentTime);
-        
-        if (document.getElementById('total-time').textContent === "0:00" && !isNaN(audio.duration)) {
-            document.getElementById('total-time').textContent = formatTime(audio.duration);
-        }
-    }
+  if (!isSeeking && audio.duration) {
+    const progressPercent = (audio.currentTime / audio.duration) * 100;
+    document.getElementById('progress-bar').value = progressPercent;
+    document.getElementById('current-time').textContent = formatTime(audio.currentTime);
+  }
 }
 
-audio.addEventListener('durationchange', function() {
-    if (!isNaN(audio.duration) && audio.duration !== Infinity) {
-        document.getElementById('total-time').textContent = formatTime(audio.duration);
-    } else {
-        document.getElementById('total-time').textContent = "--:--";
-    }
-});
-	
-function seekTrack(e) {
-    isSeeking = true;
-    const seekTime = (e.target.value / 100) * (audio.duration || 0);
-    
-    if (isFinite(seekTime)) {
-        document.getElementById('current-time').textContent = formatTime(seekTime);
-    }
-    
-    const handleSeekEnd = () => {
-        if (isFinite(seekTime)) {
-            audio.currentTime = seekTime;
-        }
-        isSeeking = false;
-        e.target.removeEventListener('mouseup', handleSeekEnd);
-        e.target.removeEventListener('touchend', handleSeekEnd);
-    };
-    
-    e.target.addEventListener('mouseup', handleSeekEnd);
-    e.target.addEventListener('touchend', handleSeekEnd);
+function changeTrack(index) {
+  currentTrackIndex = index;
+  audio.src = tracks[currentTrackIndex].src;
+  updateTrackInfo();
+  if (isMusicPlaying) {
+    audio.play().catch(e => {
+      console.log("Autoplay on track change failed:", e);
+      isMusicPlaying = false;
+      playPauseIcon.classList.remove('fa-pause');
+      playPauseIcon.classList.add('fa-play');
+    });
+  }
+}
+
+function togglePlay() {
+  if (audio.paused) {
+    audio.play()
+      .then(() => {
+        isMusicPlaying = true;
+        playPauseIcon.classList.remove('fa-play');
+        playPauseIcon.classList.add('fa-pause');
+      })
+      .catch(e => {
+        console.log("Play failed:", e);
+        isMusicPlaying = false;
+        playPauseIcon.classList.remove('fa-pause');
+        playPauseIcon.classList.add('fa-play');
+      });
+  } else {
+    audio.pause();
+    playPauseIcon.classList.remove('fa-pause');
+    playPauseIcon.classList.add('fa-play');
+    isMusicPlaying = false;
+  }
 }
 
 function simulateLoading() {
@@ -650,57 +682,6 @@ function startMusic() {
         }, 5000);
       });
   }
-}
-
-function togglePlay() {
-    if (audio.paused) {
-        audio.play()
-            .then(() => {
-                isMusicPlaying = true;
-                playPauseIcon.classList.remove('fa-play');
-                playPauseIcon.classList.add('fa-pause');
-            });
-    } else {
-        audio.pause();
-        playPauseIcon.classList.remove('fa-pause');
-        playPauseIcon.classList.add('fa-play');
-        isMusicPlaying = false;
-    }
-}
-
-function changeTrack(index) {
-    currentTrackIndex = index;
-    audio.src = tracks[currentTrackIndex].src;
-    updateTrackInfo();
-    if (isMusicPlaying) {
-        audio.play();
-    }
-}
-
-function nextTrack() {
-    let newIndex;
-    if (isShuffleOn) {
-        newIndex = Math.floor(Math.random() * tracks.length);
-        while (newIndex === currentTrackIndex && tracks.length > 1) {
-            newIndex = Math.floor(Math.random() * tracks.length);
-        }
-    } else {
-        newIndex = (currentTrackIndex + 1) % tracks.length;
-    }
-    changeTrack(newIndex);
-}
-
-function prevTrack() {
-    let newIndex;
-    if (isShuffleOn) {
-        newIndex = Math.floor(Math.random() * tracks.length);
-        while (newIndex === currentTrackIndex && tracks.length > 1) {
-            newIndex = Math.floor(Math.random() * tracks.length);
-        }
-    } else {
-        newIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
-    }
-    changeTrack(newIndex);
 }
 
 function toggleShuffle() {
