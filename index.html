@@ -435,6 +435,15 @@ let isShuffleOn = false;
 let isRepeatOn = false;
 let isSeeking = false;
 
+const loader = document.getElementById('loader');
+const progressBar = document.getElementById('progress');
+const joinBtn = document.getElementById('join-btn');
+const volumeControl = document.getElementById('volume-control');
+const playPauseIcon = document.getElementById('play-pause-icon');
+const musicControls = document.getElementById('music-controls');
+const currentTrackDisplay = document.getElementById('current-track');
+const musicToggle = document.getElementById('music-toggle');
+	
 async function loadTracks() {
   try {
     const response = await fetch('tracks.json?t=' + Date.now());
@@ -475,15 +484,6 @@ audio.addEventListener('error', function() {
   console.error('Audio error:', audio.error);
   nextTrack();
 });
-
-const loader = document.getElementById('loader');
-const progressBar = document.getElementById('progress');
-const joinBtn = document.getElementById('join-btn');
-const volumeControl = document.getElementById('volume-control');
-const playPauseIcon = document.getElementById('play-pause-icon');
-const musicControls = document.getElementById('music-controls');
-const currentTrackDisplay = document.getElementById('current-track');
-const musicToggle = document.getElementById('music-toggle');
 
 function formatTime(seconds) {
     if (isNaN(seconds)) return "0:00";
@@ -539,113 +539,125 @@ function prevTrack() {
 
 function changeTrack(index) {
     currentTrackIndex = index;
-    audio.src = tracks[currentTrackIndex].src;
-    updateTrackInfo();
-    if (isMusicPlaying) {
-        audio.play().catch(e => {
-            console.log("Autoplay on track change failed:", e);
+    initPlayer();
+}
+
+function togglePlay() {
+    if (audio.paused) {
+        const playPromise = audio.play();
+        playPromise.then(() => {
+            isMusicPlaying = true;
+            playPauseIcon.classList.remove('fa-play');
+            playPauseIcon.classList.add('fa-pause');
+        }).catch(e => {
+            console.log("Play failed:", e);
             isMusicPlaying = false;
             playPauseIcon.classList.remove('fa-pause');
             playPauseIcon.classList.add('fa-play');
         });
+    } else {
+        audio.pause();
+        playPauseIcon.classList.remove('fa-pause');
+        playPauseIcon.classList.add('fa-play');
+        isMusicPlaying = false;
     }
 }
-	
-async function checkTrackExists(url) {
-  try {
-    if (url.startsWith('http')) return true;
-    
-    const response = await fetch(url, { method: 'HEAD' });
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
-	
-async function initPlayer() {
-  if (!tracks.length) return;
-  
-  audio.removeEventListener('ended', handleTrackEnd);
 
-  const trackExists = await checkTrackExists(tracks[currentTrackIndex].src);
-  
-  if (!trackExists) {
-    console.warn(`Track not found: ${tracks[currentTrackIndex].src}`);
-    nextTrack();
-    return;
-	  
-  audio.addEventListener('ended', handleTrackEnd);
-}
-  
-  audio.src = tracks[currentTrackIndex].src;
-  audio.volume = volumeControl.value / 100;
-  
-  try {
-    await audio.load();
+// Инициализация плеера
+async function initPlayer() {
+    if (!tracks.length) return;
     
-    audio.addEventListener('loadedmetadata', updateDuration);
-    audio.addEventListener('timeupdate', updateProgress);
-    audio.addEventListener('ended', handleTrackEnd);
+    // Очищаем предыдущие обработчики
+    audio.removeEventListener('ended', handleTrackEnd);
+    audio.removeEventListener('timeupdate', updateProgress);
+    audio.removeEventListener('loadedmetadata', updateDuration);
+
+    const trackExists = await checkTrackExists(tracks[currentTrackIndex].src);
     
-    updateTrackInfo();
-    console.log(`Loaded track: ${tracks[currentTrackIndex].name}`);
-    
-    if (isMusicPlaying) {
-      audio.play().catch(e => console.log("Autoplay prevented:", e));
+    if (!trackExists) {
+        console.warn(`Track not found: ${tracks[currentTrackIndex].src}`);
+        nextTrack();
+        return;
     }
-  } catch (error) {
-    console.error('Error loading audio:', error);
-    nextTrack();
-  }
+    
+    audio.src = tracks[currentTrackIndex].src;
+    audio.volume = volumeControl.value / 100;
+    
+    try {
+        await audio.load();
+        
+        // Добавляем обработчики событий
+        audio.addEventListener('loadedmetadata', updateDuration);
+        audio.addEventListener('timeupdate', updateProgress);
+        audio.addEventListener('ended', handleTrackEnd);
+        
+        updateTrackInfo();
+        console.log(`Loaded track: ${tracks[currentTrackIndex].name}`);
+        
+        // Автовоспроизведение, если музыка уже играла
+        if (isMusicPlaying) {
+            audio.play().catch(e => console.log("Autoplay prevented:", e));
+        }
+    } catch (error) {
+        console.error('Error loading audio:', error);
+        nextTrack();
+    }
 }
 
 function handleTrackEnd() {
-  if (isRepeatOn) {
-    audio.currentTime = 0;
-    audio.play().catch(e => console.log("Repeat play failed:", e));
-  } else {
-    nextTrack();
-  }
+    if (isRepeatOn) {
+        audio.currentTime = 0;
+        audio.play().catch(e => console.log("Repeat play failed:", e));
+    } else {
+        nextTrack();
+    }
 }
 
+// Остальные вспомогательные функции
 function updateDuration() {
-  if (!isNaN(audio.duration) && audio.duration !== Infinity) {
-    document.getElementById('total-time').textContent = formatTime(audio.duration);
-  } else {
-    document.getElementById('total-time').textContent = "--:--";
-  }
+    const totalTimeElement = document.getElementById('total-time');
+    if (!isNaN(audio.duration) {
+        totalTimeElement.textContent = formatTime(audio.duration);
+    }
 }
 
 function updateTrackInfo() {
-  currentTrackDisplay.textContent = `${currentTrackIndex + 1}/${tracks.length}: ${tracks[currentTrackIndex].name}`;
-  document.getElementById('current-time').textContent = "0:00";
-  document.getElementById('progress-bar').value = 0;
-  document.getElementById('total-time').textContent = "0:00";
-  
-  playPauseIcon.classList.remove('fa-play', 'fa-pause');
-  playPauseIcon.classList.add(isMusicPlaying ? 'fa-pause' : 'fa-play');
+    currentTrackDisplay.textContent = `${currentTrackIndex + 1}/${tracks.length}: ${tracks[currentTrackIndex].name}`;
+    document.getElementById('current-time').textContent = "0:00";
+    document.getElementById('progress-bar').value = 0;
+    
+    // Обновляем иконку play/pause
+    playPauseIcon.classList.remove('fa-play', 'fa-pause');
+    playPauseIcon.classList.add(isMusicPlaying ? 'fa-pause' : 'fa-play');
 }
 
 function updateProgress() {
-  if (!isSeeking && audio.duration) {
-    const progressPercent = (audio.currentTime / audio.duration) * 100;
-    document.getElementById('progress-bar').value = progressPercent;
-    document.getElementById('current-time').textContent = formatTime(audio.currentTime);
-  }
+    if (!isSeeking && audio.duration) {
+        const progressPercent = (audio.currentTime / audio.duration) * 100;
+        document.getElementById('progress-bar').value = progressPercent;
+        document.getElementById('current-time').textContent = formatTime(audio.currentTime);
+    }
 }
 
-function changeTrack(index) {
-  currentTrackIndex = index;
-  audio.src = tracks[currentTrackIndex].src;
-  updateTrackInfo();
-  if (isMusicPlaying) {
-    audio.play().catch(e => {
-      console.log("Autoplay on track change failed:", e);
-      isMusicPlaying = false;
-      playPauseIcon.classList.remove('fa-pause');
-      playPauseIcon.classList.add('fa-play');
-    });
-  }
+function seekTrack(e) {
+    isSeeking = true;
+    const seekTime = (e.target.value / 100) * (audio.duration || 0);
+    
+    if (isFinite(seekTime)) {
+        document.getElementById('current-time').textContent = formatTime(seekTime);
+    }
+    
+    const handleSeekEnd = () => {
+        if (isFinite(seekTime)) {
+            audio.currentTime = seekTime;
+        }
+        isSeeking = false;
+        e.target.removeEventListener('mouseup', handleSeekEnd);
+        e.target.removeEventListener('touchend', handleSeekEnd);
+    };
+    
+    e.target.addEventListener('mouseup', handleSeekEnd);
+    e.target.addEventListener('touchend', handleSeekEnd);
 }
 
 function togglePlay() {
