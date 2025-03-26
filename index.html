@@ -456,7 +456,7 @@ function simulateLoading() {
 
         if (progress >= 100) {
             clearInterval(interval);
-            joinBtn.classList.add('animate-pulse');
+            joinBtn.style.animation = "pulse 1.5s infinite ease-in-out";
         }
     }, 300);
 }
