@@ -428,43 +428,48 @@
 <script>
 let tracks = [];
 
-async function loadTracks() {
+async function checkTrackExists(url) {
   try {
-    const response = await fetch('/src/tracks/tracks.json?t=' + Date.now());
+    if (url.startsWith('http')) return true;
     
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      throw new TypeError('Response is not JSON');
-    }
-    
-    tracks = await response.json();
-    
-    if (!Array.isArray(tracks) || tracks.length === 0) {
-      throw new Error('Empty or invalid tracks array');
-    }
-    
-    console.log('Successfully loaded tracks:', tracks);
-  } catch (error) {
-    console.error('Failed to load tracks:', error);
-    
-    tracks = [
-      {
-        name: "Fallback Track 1",
-        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-      },
-      {
-        name: "Fallback Track 2",
-        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+    const response = await fetch(url, { method: 'HEAD' });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+	
+async function initPlayer() {
+  if (!tracks.length) return;
+  
+  try {
+    if (!tracks[currentTrackIndex].src.startsWith('http')) {
+      const trackExists = await checkTrackExists(tracks[currentTrackIndex].src);
+      if (!trackExists) {
+        console.warn(`Track not found: ${tracks[currentTrackIndex].src}`);
+        return nextTrack();
       }
-    ];
+    }
     
-    console.log('Using fallback tracks:', tracks);
-  } finally {
-    initPlayer();
+    audio.src = tracks[currentTrackIndex].src;
+    audio.volume = volumeControl.value / 100;
+    
+    audio.currentTime = 0;
+    
+    await new Promise((resolve, reject) => {
+      audio.addEventListener('loadedmetadata', resolve);
+      audio.addEventListener('error', reject);
+    });
+    
+    updateTrackInfo();
+    console.log(`Loaded track: ${tracks[currentTrackIndex].name}`);
+    
+    if (isMusicPlaying) {
+      await audio.play();
+    }
+  } catch (error) {
+    console.error('Error loading audio:', error);
+    nextTrack();
   }
 }
 
@@ -552,11 +557,16 @@ function updateProgress() {
 
 function seekTrack(e) {
     isSeeking = true;
-    const seekTime = (e.target.value / 100) * audio.duration;
-    document.getElementById('current-time').textContent = formatTime(seekTime);
+    const seekTime = (e.target.value / 100) * (audio.duration || 0);
+    
+    if (isFinite(seekTime)) {
+        document.getElementById('current-time').textContent = formatTime(seekTime);
+    }
     
     const handleSeekEnd = () => {
-        audio.currentTime = seekTime;
+        if (isFinite(seekTime)) {
+            audio.currentTime = seekTime;
+        }
         isSeeking = false;
         e.target.removeEventListener('mouseup', handleSeekEnd);
         e.target.removeEventListener('touchend', handleSeekEnd);
