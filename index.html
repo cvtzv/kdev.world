@@ -430,8 +430,7 @@ let tracks = [];
 
 async function loadTracks() {
   try {
-    // Используем относительный путь к tracks.json
-    const response = await fetch('tracks.json?t=' + Date.now());
+    const response = await fetch('/src/tracks.json?t=' + Date.now());
     
     if (!response.ok) {
       throw new Error('Network response was not ok');
@@ -525,6 +524,17 @@ window.addEventListener('resize', () => {
     }
 });
 
+async function checkTrackExists(url) {
+  try {
+    if (url.startsWith('http')) return true;
+    
+    const response = await fetch(url, { method: 'HEAD' });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+	
 async function initPlayer() {
   if (!tracks.length) return;
   
