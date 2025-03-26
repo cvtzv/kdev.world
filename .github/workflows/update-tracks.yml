@@ -3,14 +3,18 @@ name: Update Tracks List
 on:
   push:
     paths:
-      - 'src/tracks/**'  # Изменили путь
+      - 'src/tracks/**'
+
+permissions:
+  contents: write  # Важно!
 
 jobs:
   update-tracks:
     runs-on: ubuntu-latest
-    
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       
       - name: Pull latest changes
         run: git pull
@@ -33,7 +37,7 @@ jobs:
           
       - name: Commit changes
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
