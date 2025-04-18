@@ -853,3 +853,38 @@ function startMusic() {
             });
     }
 }
+
+volumeControl.addEventListener('input', () => {
+    audio.volume = volumeControl.value / 100;
+});
+
+document.getElementById('shuffle-icon').addEventListener('click', toggleShuffle);
+document.getElementById('repeat-icon').addEventListener('click', toggleRepeat);
+});
+
+function toggleShuffle() {
+    isShuffleOn = !isShuffleOn;
+    document.getElementById('shuffle-icon').style.color = isShuffleOn ? 'var(--accent-primary)' : '';
+}
+
+function toggleRepeat() {
+    isRepeatOn = !isRepeatOn;
+    document.getElementById('repeat-icon').style.color = isRepeatOn ? 'var(--accent-primary)' : '';
+}
+
+function startMusic() {
+    if (tracks.length > 0) {
+        // Воспроизводим музыку только если есть треки
+        setTimeout(() => {
+            togglePlay();
+            // Показываем элемент управления музыкой
+            musicToggle.classList.add('active');
+            setTimeout(() => {
+                musicToggle.classList.remove('active');
+            }, 1500);
+        }, 500);
+    }
+}
+</script>
+</body>
+</html>
