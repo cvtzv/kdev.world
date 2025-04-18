@@ -9,7 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
-	    user-select: none;
+            user-select: none;
             -webkit-tap-highlight-color: transparent;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -17,20 +17,21 @@
         }
         
         :root {
-            --bg-primary: #0F172A;
-            --bg-secondary: #1E293B;
-            --text-primary: #E2E8F0;
-            --accent-primary: #6EE7B7;
-            --accent-secondary: #3B82F6;
+            --bg-primary: #0f0f19;
+            --bg-secondary: #181830;
+            --text-primary: #e5e7eb;
+            --accent-primary: #6ee7b7;
+            --accent-secondary: #4f46e5;
         }
 
         body {
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             line-height: 1.6;
             margin: 0;
             overflow-x: hidden;
+            min-height: 100vh;
         }
 
         .gradient-bg {
@@ -38,9 +39,10 @@
         }
 
         .glass-morphism {
-            background: rgba(30, 41, 59, 0.6);
+            background: rgba(24, 24, 48, 0.6);
             backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.125);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         #music-controls {
@@ -48,15 +50,15 @@
             bottom: 80px;
             right: 20px;
             width: 300px;
-            background-color: rgba(30, 41, 59, 0.95);
-            border-radius: 12px;
-            padding: 15px;
+            background-color: rgba(24, 24, 48, 0.95);
+            border-radius: 16px;
+            padding: 16px;
             transform: translateY(calc(100% + 100px));
             opacity: 0;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             z-index: 1000;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(110, 231, 183, 0.15);
             pointer-events: none;
         }
 
@@ -70,8 +72,8 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 50px;
-            height: 50px;
+            width: 54px;
+            height: 54px;
             background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
             color: white;
             border-radius: 50%;
@@ -80,66 +82,67 @@
             align-items: center;
             cursor: pointer;
             z-index: 1001;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 20px rgba(110, 231, 183, 0.3);
             transition: all 0.3s ease;
+        }
+
+        #music-toggle:active {
+            transform: scale(0.95);
         }
 
         #music-toggle i {
             transition: transform 0.3s ease;
+            font-size: 1.2rem;
         }
 
         #music-toggle.active i {
             transform: rotate(180deg);
         }
 
-		#progress-bar {
+        #progress-bar {
             -webkit-appearance: none;
-            height: 4px;
-            background: #334155;
-            border-radius: 2px;
+            height: 5px;
+            background: rgba(51, 65, 85, 0.8);
+            border-radius: 3px;
             outline: none;
             cursor: pointer;
         }
 
-		#progress-bar::-webkit-slider-thumb {
+        #progress-bar::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: var(--accent-primary);
             cursor: pointer;
             opacity: 0;
             transition: opacity 0.2s;
+            box-shadow: 0 0 5px rgba(110, 231, 183, 0.5);
         }
 
-		#progress-bar:hover::-webkit-slider-thumb {
+        #progress-bar:hover::-webkit-slider-thumb {
             opacity: 1;
         }
 
         .hover-card {
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .hover-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(110, 231, 183, 0.2);
         }
 
         .neon-text {
             text-shadow: 
                 0 0 5px var(--accent-primary),
-                0 0 10px var(--accent-primary);
+                0 0 15px var(--accent-primary);
         }
 
         .skill-progress {
-            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .profile-banner {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            filter: brightness(0.7);
+            transition: width 1.8s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         .volume-slider {
@@ -156,6 +159,7 @@
             border-radius: 50%;
             background: var(--accent-primary);
             cursor: pointer;
+            box-shadow: 0 0 5px rgba(110, 231, 183, 0.5);
         }
 
         #loader {
@@ -170,7 +174,7 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1), visibility 0.8s;
         }
 
         .loader-content {
@@ -179,18 +183,30 @@
         }
 
         .loader-logo {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 1.5rem;
             color: var(--accent-primary);
-            text-shadow: 0 0 15px rgba(110, 231, 183, 0.5);
+            text-shadow: 0 0 15px rgba(110, 231, 183, 0.6);
             animation: pulse 2s infinite ease-in-out;
         }
 
         .loader-bar-container {
             width: 80%;
-            max-width: 300px;
-            margin: 2rem 0;
+            max-width: 280px;
+            height: 4px;
+            margin: 2rem auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
             position: relative;
+        }
+
+        .loader-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            width: 0%;
         }
 
         .loader-text {
@@ -198,19 +214,20 @@
             opacity: 0.8;
             margin-bottom: 1.5rem;
             font-size: 1.1rem;
+            letter-spacing: 1px;
         }
 
         #join-btn {
             margin-top: 2rem;
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             color: white;
-            padding: 12px 32px;
+            padding: 14px 38px;
             border-radius: 50px;
             font-weight: 600;
             letter-spacing: 1px;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 20px rgba(110, 231, 183, 0.3);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -218,7 +235,11 @@
 
         #join-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 8px 25px rgba(110, 231, 183, 0.4);
+        }
+
+        #join-btn:active {
+            transform: translateY(-1px);
         }
 
         #join-btn::after {
@@ -228,7 +249,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
             transform: translateX(-100%);
             transition: transform 0.4s ease;
         }
@@ -251,45 +272,174 @@
             animation: fadeIn 0.8s ease-out forwards;
         }
 
-        .loader-content .loader-logo {
+        .loader-logo {
             animation-delay: 0.1s;
         }
 
-        .loader-content .loader-text {
+        .loader-text {
             animation-delay: 0.3s;
         }
 
-        .loader-content .loader-bar-container {
+        .loader-bar-container {
             animation-delay: 0.5s;
         }
 
-        .loader-content #join-btn {
+        #join-btn {
             animation-delay: 0.7s;
         }
 
-        @media (max-width: 768px) {
-            .profile-banner {
-                height: 150px;
-            }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
 
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .tag {
+            transition: all 0.3s ease;
+        }
+        
+        .tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .social-link {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .social-link:hover {
+            transform: scale(1.1);
+        }
+        
+        .social-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-primary);
+            transition: width 0.3s ease;
+        }
+        
+        .social-link:hover::after {
+            width: 100%;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 1rem;
+        }
+        
+        @media (min-width: 640px) {
+            .container {
+                max-width: 640px;
+                padding: 2rem;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .container {
+                max-width: 768px;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 1024px;
+            }
+        }
+        
+        @media (max-width: 640px) {
             #music-controls {
                 width: calc(100% - 40px);
                 right: 20px;
                 bottom: 80px;
             }
-
-            .container {
-                padding: 0;
+            
+            .loader-logo {
+                font-size: 2.8rem;
+            }
+            
+            #join-btn {
+                padding: 12px 30px;
+            }
+            
+            .skill-progress {
+                height: 6px;
             }
         }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        
+        .progress-container {
+            position: relative;
+            height: 6px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 3px;
+            overflow: hidden;
         }
-
-        .floating {
-            animation: float 3s ease-in-out infinite;
+        
+        .progress-glow {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: white;
+            filter: blur(3px);
+            opacity: 0.6;
+            animation: glow 2s infinite linear;
+        }
+        
+        @keyframes glow {
+            0% { left: -5px; }
+            100% { left: 100%; }
+        }
+        
+        .control-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover {
+            background: rgba(110, 231, 183, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .avatar-container {
+            position: relative;
+            width: 128px;
+            height: 128px;
+            margin: 0 auto;
+        }
+        
+        .avatar-glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            filter: blur(15px);
+            opacity: 0.3;
+            z-index: -1;
+            animation: pulse 3s infinite ease-in-out;
+        }
+        
+        .backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(2px);
+            z-index: -1;
         }
     </style>
 </head>
@@ -299,11 +449,9 @@
             <div class="loader-logo">квт</div>
             <p class="loader-text">> lyin n' dyin</p>
             <div class="loader-bar-container">
-                <div class="loader-bar">
-                    <div id="progress" class="loader-progress"></div>
-                </div>
+                <div id="progress" class="loader-progress"></div>
             </div>
-            <button id="join-btn" class="mt-6">
+            <button id="join-btn">
                 кликни
             </button>
         </div>
@@ -313,116 +461,125 @@
         <i class="fas fa-music"></i>
     </div>
 
-<div id="music-controls">
-    <div class="flex justify-between items-center mb-3">
-        <span class="font-bold text-emerald-400">Сейчас играет</span>
-        <div class="flex items-center space-x-3">
-            <button onclick="toggleShuffle()" class="text-white hover:text-emerald-400 transition-colors" title="Перемешать">
-                <i id="shuffle-icon" class="fas fa-random"></i>
-            </button>
-            <button onclick="prevTrack()" class="text-white hover:text-emerald-400 transition-colors" title="Предыдущий">
-                <i class="fas fa-step-backward"></i>
-            </button>
-            <button onclick="togglePlay()" class="text-white hover:text-emerald-400 transition-colors" title="Воспроизвести/Пауза">
-                <i id="play-pause-icon" class="fas fa-pause"></i>
-            </button>
-            <button onclick="nextTrack()" class="text-white hover:text-emerald-400 transition-colors" title="Следующий">
-                <i class="fas fa-step-forward"></i>
-            </button>
-            <button onclick="toggleRepeat()" class="text-white hover:text-emerald-400 transition-colors" title="Повтор">
-                <i id="repeat-icon" class="fas fa-redo"></i>
-            </button>
+    <div id="music-controls">
+        <div class="flex justify-between items-center mb-4">
+            <span class="font-bold text-emerald-400">Сейчас играет</span>
+            <div class="flex items-center space-x-2">
+                <button onclick="toggleShuffle()" class="control-btn text-white hover:text-emerald-400 transition-colors" title="Перемешать">
+                    <i id="shuffle-icon" class="fas fa-random"></i>
+                </button>
+                <button onclick="prevTrack()" class="control-btn text-white hover:text-emerald-400 transition-colors" title="Предыдущий">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button onclick="togglePlay()" class="control-btn text-white hover:text-emerald-400 transition-colors" title="Воспроизвести/Пауза">
+                    <i id="play-pause-icon" class="fas fa-pause"></i>
+                </button>
+                <button onclick="nextTrack()" class="control-btn text-white hover:text-emerald-400 transition-colors" title="Следующий">
+                    <i class="fas fa-step-forward"></i>
+                </button>
+                <button onclick="toggleRepeat()" class="control-btn text-white hover:text-emerald-400 transition-colors" title="Повтор">
+                    <i id="repeat-icon" class="fas fa-redo"></i>
+                </button>
+            </div>
         </div>
+        
+        <div class="mb-2">
+            <input type="range" id="progress-bar" value="0" class="w-full appearance-none cursor-pointer" oninput="seekTrack(event)">
+        </div>
+        <div class="flex justify-between text-xs text-gray-400 mb-3">
+            <span id="current-time">0:00</span>
+            <span id="total-time">0:00</span>
+        </div>
+        
+        <div class="flex items-center space-x-3">
+            <i class="fas fa-volume-down text-white text-sm"></i>
+            <input type="range" id="volume-control" min="0" max="100" value="50" class="volume-slider flex-1">
+            <i class="fas fa-volume-up text-white text-sm"></i>
+        </div>
+        <div class="mt-3 text-center text-sm font-medium text-emerald-400 truncate" id="current-track">Загрузка трека...</div>
     </div>
-    
-    <div class="mb-2">
-        <input type="range" id="progress-bar" value="0" class="w-full h-1 bg-gray-700 rounded-full appearance-none cursor-pointer" oninput="seekTrack(event)">
-    </div>
-    <div class="flex justify-between text-xs text-gray-400 mb-3">
-        <span id="current-time">0:00</span>
-        <span id="total-time">0:00</span>
-    </div>
-    
-    <div class="flex items-center space-x-3">
-        <i class="fas fa-volume-down text-white text-sm"></i>
-        <input type="range" id="volume-control" min="0" max="100" value="50" class="volume-slider flex-1">
-        <i class="fas fa-volume-up text-white text-sm"></i>
-    </div>
-    <div class="mt-2 text-center text-sm text-gray-400 truncate" id="current-track">Загрузка трека...</div>
-</div>
 
-    <div class="w-full max-w-2xl gradient-bg rounded-2xl shadow-2xl overflow-hidden container glass-morphism">
-        <header class="relative text-white">
-            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-slate-900/80 z-0"></div>
-            
-            <div class="relative z-10 p-6 pt-12 pb-8 text-center">
-                <img src="/src/avatar.jpg" alt="avatar" class="mx-auto mb-6 w-32 h-32 rounded-full border-4 border-white/20 shadow-2xl hover-card floating">
-                <h1 class="text-4xl font-bold mb-2 neon-text">квт</h1>
-                <p class="text-lg opacity-80">> lyin n' dyin</p>
-            </div>
-        </header>
-
-        <main class="p-6 space-y-8">
-            <section class="bg-slate-800/50 rounded-xl p-6 glass-morphism">
-                <h2 class="text-2xl font-semibold mb-6 text-center text-emerald-400">My Skills</h2>
-                <div class="space-y-4">
-                    <div>
-                        <div class="flex justify-between mb-2 text-sm">
-                            <span class="text-purple-400">HTML/CSS</span>
-                            <span>42%</span>
-                        </div>
-                        <div class="bg-slate-700 rounded-full h-2">
-                            <div class="skill-progress bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" style="width: 0%" data-width="42%"></div>
-                        </div>
+    <div class="container mx-auto px-4 py-8">
+        <div class="w-full max-w-2xl mx-auto gradient-bg rounded-2xl shadow-2xl overflow-hidden glass-morphism transform transition-all duration-500">
+            <header class="relative text-white">
+                <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-slate-900/90 z-0"></div>
+                
+                <div class="relative z-10 p-6 pt-12 pb-8 text-center">
+                    <div class="avatar-container">
+                        <div class="avatar-glow"></div>
+                        <img src="/src/avatar.jpg" alt="avatar" class="w-full h-full rounded-full border-4 border-white/20 object-cover shadow-2xl floating">
                     </div>
-                    <div>
-                        <div class="flex justify-between mb-2 text-sm">
-                            <span class="text-emerald-400">JavaScript</span>
-                            <span>22%</span>
-                        </div>
-                        <div class="bg-slate-700 rounded-full h-2">
-                            <div class="skill-progress bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full" style="width: 0%" data-width="22%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-2 text-sm">
-                            <span class="text-blue-400">Python</span>
-                            <span>2%</span>
-                        </div>
-                        <div class="bg-slate-700 rounded-full h-2">
-                            <div class="skill-progress bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full" style="width: 0%" data-width="2%"></div>
-                        </div>
-                    </div>
+                    <h1 class="text-4xl sm:text-5xl font-bold mb-2 mt-4 neon-text">квт</h1>
+                    <p class="text-lg sm:text-xl opacity-90">> lyin n' dyin</p>
                 </div>
-            </section>
+            </header>
 
-            <section>
-                <h2 class="text-2xl font-semibold mb-6 text-center text-emerald-400">My Projects</h2>
-                <div class="grid gap-4">
-                    <div class="bg-slate-800/50 rounded-xl p-6 hover-card glass-morphism">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-400">kDev Workspace</h3>
-                        <p class="text-gray-300 mb-4 text-sm">Главная ветка сети моих проектов.</p>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="bg-blue-900/50 text-blue-300 px-3 py-1 rounded-full text-xs">All</span>
+            <main class="p-6 space-y-8">
+                <section class="bg-slate-800/30 rounded-xl p-6 glass-morphism">
+                    <h2 class="text-2xl font-semibold mb-6 text-center text-emerald-400">My Skills</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between mb-2 text-sm font-medium">
+                                <span class="text-purple-400">HTML/CSS</span>
+                                <span class="text-purple-300">42%</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-glow"></div>
+                                <div class="skill-progress bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full" style="width: 0%" data-width="42%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2 text-sm font-medium">
+                                <span class="text-emerald-400">JavaScript</span>
+                                <span class="text-emerald-300">22%</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-glow"></div>
+                                <div class="skill-progress bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full" style="width: 0%" data-width="22%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2 text-sm font-medium">
+                                <span class="text-blue-400">Python</span>
+                                <span class="text-blue-300">2%</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-glow"></div>
+                                <div class="skill-progress bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full" style="width: 0%" data-width="2%"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
-        </main>
+                </section>
 
-        <footer class="bg-black/20 text-center py-6">
-            <div class="flex justify-center gap-4 mb-4 flex-wrap">
-                <a href="https://t.me/cfSpamBlockBot" class="text-gray-400 hover:text-blue-400 transition-colors text-sm" target="_blank">
-                    <i class="fab fa-telegram mr-1"></i> Telegram
-                </a>
-                <a href="https://github.com/kdevwp" class="text-gray-400 hover:text-blue-400 transition-colors text-sm" target="_blank">
-                    <i class="fab fa-github mr-1"></i> GitHub
-                </a>
-                <a href="https://discord.com/users/663006385554063380" class="text-gray-400 hover:text-blue-400 transition-colors text-sm" target="_blank">
-                    <i class="fab fa-discord mr-1"></i> Discord
-                </a>
-            </div>
-        </footer>
+                <section>
+                    <h2 class="text-2xl font-semibold mb-6 text-center text-emerald-400">My Projects</h2>
+                    <div class="grid gap-4">
+                        <div class="bg-slate-800/30 rounded-xl p-6 hover-card glass-morphism">
+                            <h3 class="text-xl font-semibold mb-3 text-blue-400">kDev Workspace</h3>
+                            <p class="text-gray-300 mb-4 text-sm">Главная ветка сети моих проектов.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="tag bg-blue-900/50 text-blue-300 px-3 py-1 rounded-full text-xs">All</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <footer class="bg-black/30 text-center py-6 backdrop-blur-sm">
+                <div class="flex justify-center gap-6 mb-4 flex-wrap">
+                    <a href="https://t.me/cfSpamBlockBot" class="social-link text-gray-400 hover:text-blue-400 transition-colors text-sm flex items-center" target="_blank">
+                        <i class="fab fa-telegram mr-1"></i> Telegram
+                    </a>
+                    <a href="https://github.com/kdevwp" class="social-link text-gray-400 hover:text-blue-400 transition-colors text-sm flex items-center" target="_blank">
+                        <i class="fab fa-github mr-1"></i> GitHub
+                    </a>
+                    <a href="https://discord.com/users/663006385554063380" class="social-link text-gray-400 hover:text-blue-400 transition-colors text-sm flex items-center" target="_blank">
+                        <i class="fab fa-discord mr-1"></i> Discord
+                    </a>
+                </div>
+                <div class="text-xs text-gray-500">© 2025 kdev.world</div>
+            </footer>
+        </div>
     </div>
 
 <script>
@@ -641,67 +798,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const skillProgressBars = document.querySelectorAll('.skill-progress');
     skillProgressBars.forEach(bar => {
         const targetWidth = bar.getAttribute('data-width');
-        bar.style.width = targetWidth;
+        setTimeout(() => {
+            bar.style.width = targetWidth;
+        }, 500);
     });
 	
     joinBtn.addEventListener('click', () => {
         loader.style.opacity = '0';
+        loader.style.visibility = 'hidden';
         setTimeout(() => {
             loader.style.display = 'none';
             startMusic();
         }, 500);
     });
 
-    volumeControl.addEventListener('input', () => {
-        audio.volume = volumeControl.value / 100;
-    });
-});
-
-function startMusic() {
-    audio.volume = 0.1;
-    const playPromise = audio.play();
-    
-    if (playPromise !== undefined) {
-        playPromise
-            .then(() => {
-                isMusicPlaying = true;
-                playPauseIcon.className = 'fas fa-pause';
-            })
-            .catch(error => {
-                console.log("Autoplay prevented. Showing music controls.");
-                musicToggle.style.display = 'flex';
-                
-                const notification = document.createElement('div');
-                notification.textContent = 'Кликните для воспроизведения музыки';
-                notification.style.position = 'fixed';
-                notification.style.bottom = '80px';
-                notification.style.right = '20px';
-                notification.style.background = 'rgba(30,41,59,0.9)';
-                notification.style.padding = '10px';
-                notification.style.borderRadius = '5px';
-                notification.style.zIndex = '1002';
-                notification.id = 'music-notification';
-                document.body.appendChild(notification);
-                
-                setTimeout(() => notification.remove(), 5000);
-            });
-    }
-}
-
-function toggleShuffle() {
-    isShuffleOn = !isShuffleOn;
-    document.getElementById('shuffle-icon').style.color = isShuffleOn ? 'var(--accent-primary)' : 'white';
-}
-
-function toggleRepeat() {
-    isRepeatOn = !isRepeatOn;
-    document.getElementById('repeat-icon').style.color = isRepeatOn ? 'var(--accent-primary)' : 'white';
-}
-
-audio.addEventListener('error', function() {
-    console.error('Audio error:', audio.error);
-    nextTrack();
-});
-</script>
-</body>
-</html>
+    volumeControl.addEventListener('input', () =>
