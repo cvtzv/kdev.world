@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Портфолио</title>
+    <title>kdev.world</title>
     <style>
         * {
             margin: 0;
@@ -200,7 +200,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="avatar" style="background-image: url('avatar.jpg');"></div>
+        <div class="avatar" style="background-image: url('/src/avatar.jpg');"></div>
         <div class="name">квтишка</div>
         
         <div class="social-links">
@@ -270,16 +270,49 @@
 
             async loadTracks() {
                 try {
-                    const response = await fetch('tracks.json?t=' + Date.now());
-                    this.tracks = await response.json();
+                    this.tracks = [
+                        {
+                            "name": "ASERT - Мысли",
+                            "src": "src/tracks/33. ASERT - Мысли.mp3"
+                        },
+                        {
+                            "name": "Полка - Знаю",
+                            "src": "src/tracks/77. Полка - Знаю.mp3"
+                        },
+                        {
+                            "name": "ТРАВМА, катя милтей - Убегай от меня",
+                            "src": "src/tracks/94. ТРАВМА, катя милтей - Убегай от меня.mp3"
+                        },
+                        {
+                            "name": "xguyxx - bbb_000",
+                            "src": "src/tracks/60. xguyxx - bbb_000.mp3"
+                        },
+                        {
+                            "name": "ТРАВМА - Закричу на весь мир",
+                            "src": "src/tracks/5. ТРАВМА - Закричу на весь мир.mp3"
+                        }
+                    ];
+                    
                     this.parseTrackInfo();
                     this.totalTracks.textContent = this.tracks.length;
                 } catch (error) {
+                    console.error('Ошибка загрузки треков:', error);
                     this.tracks = [
                         { title: "sil2nt hill", artist: "auratoshi", src: "src/tracks/16. auratoshi - sil2nt hill.mp3" }
                     ];
                     this.totalTracks.textContent = this.tracks.length;
                 }
+            }
+
+            parseTrackInfo() {
+                this.tracks = this.tracks.map(track => {
+                    const parts = track.name.split(' - ');
+                    return {
+                        title: parts.length > 1 ? parts.slice(1).join(' - ') : track.name,
+                        artist: parts.length > 1 ? parts[0] : 'Неизвестный исполнитель',
+                        src: track.src
+                    };
+                });
             }
 
             setupEventListeners() {
@@ -291,6 +324,11 @@
                 this.audio.addEventListener('timeupdate', () => this.updateProgress());
                 this.audio.addEventListener('ended', () => this.nextTrack());
                 this.audio.addEventListener('loadedmetadata', () => this.updateDuration());
+                this.audio.addEventListener('error', (e) => {
+                    console.error('Ошибка загрузки аудио:', e);
+                    this.trackTitle.textContent = 'Ошибка загрузки';
+                    this.trackArtist.textContent = 'Файл не найден';
+                });
             }
 
             loadTrack(index) {
@@ -305,6 +343,7 @@
                     
                     this.progress.style.width = '0%';
                     this.currentTime.textContent = '0:00';
+                    this.duration.textContent = '0:00';
                 }
             }
 
@@ -313,7 +352,10 @@
                     this.audio.pause();
                     this.playBtn.textContent = '▶';
                 } else {
-                    this.audio.play();
+                    this.audio.play().catch(e => {
+                        console.error('Ошибка воспроизведения:', e);
+                        this.trackTitle.textContent = 'Ошибка воспроизведения';
+                    });
                     this.playBtn.textContent = '⏸';
                 }
                 this.isPlaying = !this.isPlaying;
@@ -323,7 +365,7 @@
                 const newIndex = this.currentIndex > 0 ? this.currentIndex - 1 : this.tracks.length - 1;
                 this.loadTrack(newIndex);
                 if (this.isPlaying) {
-                    this.audio.play();
+                    this.audio.play().catch(e => console.error('Ошибка воспроизведения:', e));
                 }
             }
 
@@ -331,7 +373,7 @@
                 const newIndex = this.currentIndex < this.tracks.length - 1 ? this.currentIndex + 1 : 0;
                 this.loadTrack(newIndex);
                 if (this.isPlaying) {
-                    this.audio.play();
+                    this.audio.play().catch(e => console.error('Ошибка воспроизведения:', e));
                 }
             }
 
@@ -350,10 +392,13 @@
             }
 
             updateDuration() {
-                this.duration.textContent = this.formatTime(this.audio.duration);
+                if (this.audio.duration) {
+                    this.duration.textContent = this.formatTime(this.audio.duration);
+                }
             }
 
             formatTime(seconds) {
+                if (isNaN(seconds)) return '0:00';
                 const mins = Math.floor(seconds / 60);
                 const secs = Math.floor(seconds % 60);
                 return `${mins}:${secs.toString().padStart(2, '0')}`;
