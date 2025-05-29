@@ -1,171 +1,737 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>.kdev.world - 14th feb.</title>
+    <title>404 - Страница не найдена - kdev.world</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        canvas {
-            position: absolute;
-            left: 0;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        :root {
+            --primary: #0A0A0A;
+            --secondary: #111111;
+            --accent: #FF6B6B;
+            --accent-blue: #4ECDC4;
+            --accent-purple: #A8E6CF;
+            --text-primary: #FFFFFF;
+            --text-secondary: #888888;
+            --glass-bg: rgba(17, 17, 17, 0.8);
+            --border: rgba(255, 255, 255, 0.1);
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            --gradient-3: linear-gradient(135deg, #4ecdc4 0%, #a8e6cf 100%);
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .animated-bg {
+            position: fixed;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, .2);
+            z-index: -1;
+            background: radial-gradient(circle at 20% 80%, rgba(255, 107, 107, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(78, 205, 196, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(168, 230, 207, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 60% 70%, rgba(255, 202, 87, 0.1) 0%, transparent 50%);
+            animation: bgMove 20s ease-in-out infinite;
+        }
+
+        @keyframes bgMove {
+            0%, 100% { 
+                transform: translate(0, 0) rotate(0deg) scale(1); 
+                filter: hue-rotate(0deg);
+            }
+            33% { 
+                transform: translate(30px, -30px) rotate(1deg) scale(1.05); 
+                filter: hue-rotate(60deg);
+            }
+            66% { 
+                transform: translate(-25px, 25px) rotate(-1deg) scale(0.95); 
+                filter: hue-rotate(-60deg);
+            }
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .floating-icon {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.08);
+            font-size: 2.5rem;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .floating-icon:nth-child(1) {
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-icon:nth-child(2) {
+            top: 25%;
+            right: 15%;
+            animation-delay: 1.5s;
+        }
+
+        .floating-icon:nth-child(3) {
+            bottom: 35%;
+            left: 20%;
+            animation-delay: 3s;
+        }
+
+        .floating-icon:nth-child(4) {
+            bottom: 20%;
+            right: 10%;
+            animation-delay: 4.5s;
+        }
+
+        .floating-icon:nth-child(5) {
+            top: 60%;
+            left: 50%;
+            animation-delay: 6s;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0) rotate(0deg) scale(1); 
+                opacity: 0.08; 
+            }
+            25% { 
+                transform: translateY(-30px) rotate(90deg) scale(1.1); 
+                opacity: 0.15; 
+            }
+            50% { 
+                transform: translateY(-20px) rotate(180deg) scale(0.9); 
+                opacity: 0.12; 
+            }
+            75% { 
+                transform: translateY(-40px) rotate(270deg) scale(1.05); 
+                opacity: 0.18; 
+            }
+        }
+
+        .error-container {
+            text-align: center;
+            max-width: 700px;
+            padding: 4rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 35px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .error-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient-3);
+            border-radius: 35px 35px 0 0;
+        }
+
+        .error-container::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(78, 205, 196, 0.1), transparent);
+            animation: rotate 15s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .error-number {
+            font-size: 8rem;
+            font-weight: 900;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(78, 205, 196, 0.3);
+            position: relative;
+            display: inline-block;
+            animation: glitch 3s ease-in-out infinite;
+        }
+
+        .error-number::before {
+            content: '404';
+            position: absolute;
+            top: 0;
+            left: 2px;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glitch-1 0.5s infinite;
+            opacity: 0.8;
+        }
+
+        .error-number::after {
+            content: '404';
+            position: absolute;
+            top: 0;
+            left: -2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glitch-2 0.5s infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { transform: translate(0); opacity: 0; }
+            50% { transform: translate(2px, -2px); opacity: 0.8; }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { transform: translate(0); opacity: 0; }
+            50% { transform: translate(-2px, 2px); opacity: 0.8; }
+        }
+
+        .error-title {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .error-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            color: var(--accent-blue);
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        .error-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%;
+            height: 120%;
+            border: 2px solid var(--accent-blue);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            animation: ripple 3s infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2.5);
+                opacity: 0;
+            }
+        }
+
+        .search-section {
+            margin: 2.5rem 0;
+            position: relative;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid var(--border);
+            border-radius: 50px;
+            background: var(--secondary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 25px rgba(78, 205, 196, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: var(--gradient-3);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.4);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .action-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 180px;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient-2);
+            color: white;
+            box-shadow: 0 15px 35px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 45px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-5px);
+            background: var(--secondary);
+            box-shadow: var(--shadow);
+            border-color: var(--accent-blue);
+        }
+
+        .btn-tertiary {
+            background: var(--gradient-3);
+            color: white;
+            box-shadow: 0 15px 35px rgba(78, 205, 196, 0.3);
+        }
+
+        .btn-tertiary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 45px rgba(78, 205, 196, 0.4);
+        }
+
+        .suggestions-section {
+            text-align: left;
+            background: var(--secondary);
+            border-radius: 25px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .suggestions-section::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: var(--gradient-3);
+            border-radius: 25px;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .suggestions-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .suggestions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .suggestion-item {
+            padding: 1rem;
+            background: var(--glass-bg);
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .suggestion-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.2);
+            border-color: var(--accent-blue);
+        }
+
+        .suggestion-item i {
+            color: var(--accent-blue);
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+
+        .suggestion-item span {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .stats-section {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .error-container {
+                margin: 1rem;
+                padding: 2.5rem 2rem;
+            }
+
+            .error-number {
+                font-size: 6rem;
+            }
+
+            .error-title {
+                font-size: 2.2rem;
+            }
+
+            .error-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-btn {
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .suggestions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-section {
+                flex-direction: column;
+                gap: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <canvas id="heart"></canvas>
+    <div class="animated-bg"></div>
+    
+    <div class="floating-elements">
+        <i class="floating-icon fas fa-search"></i>
+        <i class="floating-icon fas fa-home"></i>
+        <i class="floating-icon fas fa-compass"></i>
+        <i class="floating-icon fas fa-map"></i>
+        <i class="floating-icon fas fa-question-circle"></i>
+    </div>
+
+    <div class="error-container">
+        <div class="error-icon">
+            <i class="fas fa-search"></i>
+        </div>
+
+        <div class="error-number">404</div>
+        
+        <h1 class="error-title">Страница не найдена</h1>
+        <p class="error-subtitle">
+            Упс! Похоже, страница, которую вы ищете, не существует или была перемещена.<br>
+            Не волнуйтесь, мы поможем вам найти нужную информацию.
+        </p>
+
+        <div class="action-buttons">
+            <button class="action-btn btn-primary" onclick="goHome()">
+                <i class="fas fa-home"></i>
+                На главную
+            </button>
+            <button class="action-btn btn-secondary" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+                Назад
+            </button>
+        </div>
+
+            <div class="stats-section">
+                <div class="stat-item">
+                    <div class="stat-number" id="visitorsCount">1,247</div>
+                    <div class="stat-label">Посетителей сегодня</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="pagesCount">156</div>
+                    <div class="stat-label">Страниц на сайте</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="projectsCount">42</div>
+                    <div class="stat-label">Завершенных проектов</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        window.requestAnimationFrame =
-            window.__requestAnimationFrame ||
-            window.requestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            window.oRequestAnimationFrame ||
-            window.msRequestAnimationFrame ||
-            (function () {
-                return function (callback, element) {
-                    var lastTime = element.__lastTime;
-                    if (lastTime === undefined) {
-                        lastTime = 0;
-                    }
-                    var currTime = Date.now();
-                    var timeToCall = Math.max(1, 33 - (currTime - lastTime));
-                    window.setTimeout(callback, timeToCall);
-                    element.__lastTime = currTime + timeToCall;
-                };
-            })();
-        window.isDevice = (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(((navigator.userAgent || navigator.vendor || window.opera)).toLowerCase()));
-        var loaded = false;
-        var init = function () {
-            if (loaded) return;
-            loaded = true;
-            var mobile = window.isDevice;
-            var koef = mobile ? 0.5 : 1;
-            var canvas = document.getElementById('heart');
-            var ctx = canvas.getContext('2d');
-            var width = canvas.width = koef * innerWidth;
-            var height = canvas.height = koef * innerHeight;
-            var rand = Math.random;
-            ctx.fillStyle = "rgba(0,0,0,1)";
-            ctx.fillRect(0, 0, width, height);
+        document.addEventListener('DOMContentLoaded', () => {
+            animateStats();
+            setupSearch();
+        });
 
-            var heartPosition = function (rad) {
-                //return [Math.sin(rad), Math.cos(rad)];
-                return [Math.pow(Math.sin(rad), 3), -(15 * Math.cos(rad) - 5 * Math.cos(2 * rad) - 2 * Math.cos(3 * rad) - Math.cos(4 * rad))];
-            };
-            var scaleAndTranslate = function (pos, sx, sy, dx, dy) {
-                return [dx + pos[0] * sx, dy + pos[1] * sy];
-            };
+        function animateStats() {
+            const stats = [
+                { element: 'visitorsCount', target: 1247, suffix: '' },
+                { element: 'pagesCount', target: 156, suffix: '' },
+                { element: 'projectsCount', target: 42, suffix: '' }
+            ];
 
-            window.addEventListener('resize', function () {
-                width = canvas.width = koef * innerWidth;
-                height = canvas.height = koef * innerHeight;
-                ctx.fillStyle = "rgba(0,0,0,1)";
-                ctx.fillRect(0, 0, width, height);
+            stats.forEach(stat => {
+                animateCounter(stat.element, stat.target, stat.suffix);
             });
+        }
 
-            var traceCount = mobile ? 20 : 50;
-            var pointsOrigin = [];
-            var i;
-            var dr = mobile ? 0.3 : 0.1;
-            for (i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 210, 13, 0, 0));
-            for (i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 150, 9, 0, 0));
-            for (i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 90, 5, 0, 0));
-            var heartPointsCount = pointsOrigin.length;
-
-            var targetPoints = [];
-            var pulse = function (kx, ky) {
-                for (i = 0; i < pointsOrigin.length; i++) {
-                    targetPoints[i] = [];
-                    targetPoints[i][0] = kx * pointsOrigin[i][0] + width / 2;
-                    targetPoints[i][1] = ky * pointsOrigin[i][1] + height / 2;
+        function animateCounter(elementId, target, suffix = '') {
+            const element = document.getElementById(elementId);
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
                 }
-            };
+                element.textContent = Math.floor(current).toLocaleString() + suffix;
+            }, 20);
+        }
 
-            var e = [];
-            for (i = 0; i < heartPointsCount; i++) {
-                var x = rand() * width;
-                var y = rand() * height;
-                e[i] = {
-                    vx: 0,
-                    vy: 0,
-                    R: 2,
-                    speed: rand() + 5,
-                    q: ~~(rand() * heartPointsCount),
-                    D: 2 * (i % 2) - 1,
-                    force: 0.2 * rand() + 0.7,
-                    f: "hsla(0," + ~~(40 * rand() + 60) + "%," + ~~(60 * rand() + 20) + "%,.3)",
-                    trace: []
-                };
-                for (var k = 0; k < traceCount; k++) e[i].trace[k] = { x: x, y: y };
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+        }
+
+        function performSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const query = searchInput.value.trim();
+            
+            if (query) {
+                const searchBtn = document.querySelector('.search-btn');
+                const icon = searchBtn.querySelector('i');
+                
+                icon.className = 'fas fa-spinner';
+                icon.style.animation = 'spin 1s linear infinite';
+                
+                setTimeout(() => {
+                    window.location.href = `/search?q=${encodeURIComponent(query)}`;
+                }, 1000);
             }
+        }
 
-            var config = {
-                traceK: 0.4,
-                timeDelta: 0.01
-            };
+        function goHome() {
+            addButtonEffect(event.target);
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 200);
+        }
 
-            var time = 0;
-            var loop = function () {
-                var n = -Math.cos(time);
-                pulse((1 + n) * .5, (1 + n) * .5);
-                time += ((Math.sin(time)) < 0 ? 9 : (n > 0.8) ? .2 : 1) * config.timeDelta;
-                ctx.fillStyle = "rgba(0,0,0,.1)";
-                ctx.fillRect(0, 0, width, height);
-                for (i = e.length; i--;) {
-                    var u = e[i];
-                    var q = targetPoints[u.q];
-                    var dx = u.trace[0].x - q[0];
-                    var dy = u.trace[0].y - q[1];
-                    var length = Math.sqrt(dx * dx + dy * dy);
-                    if (10 > length) {
-                        if (0.95 < rand()) {
-                            u.q = ~~(rand() * heartPointsCount);
-                        }
-                        else {
-                            if (0.99 < rand()) {
-                                u.D *= -1;
-                            }
-                            u.q += u.D;
-                            u.q %= heartPointsCount;
-                            if (0 > u.q) {
-                                u.q += heartPointsCount;
-                            }
-                        }
-                    }
-                    u.vx += -dx / length * u.speed;
-                    u.vy += -dy / length * u.speed;
-                    u.trace[0].x += u.vx;
-                    u.trace[0].y += u.vy;
-                    u.vx *= u.force;
-                    u.vy *= u.force;
-                    for (k = 0; k < u.trace.length - 1;) {
-                        var T = u.trace[k];
-                        var N = u.trace[++k];
-                        N.x -= config.traceK * (N.x - T.x);
-                        N.y -= config.traceK * (N.y - T.y);
-                    }
-                    ctx.fillStyle = u.f;
-                    for (k = 0; k < u.trace.length; k++) {
-                        ctx.fillRect(u.trace[k].x, u.trace[k].y, 1, 1);
-                    }
+        function goBack() {
+            addButtonEffect(event.target);
+            setTimeout(() => {
+                if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    window.location.href = '/';
                 }
-                //ctx.fillStyle = "rgba(255,255,255,1)";
-                //for (i = u.trace.length; i--;) ctx.fillRect(targetPoints[i][0], targetPoints[i][1], 2, 2);
+            }, 200);
+        }
 
-                window.requestAnimationFrame(loop, canvas);
-            };
-            loop();
-        };
+        function showSitemap() {
+            addButtonEffect(event.target);
+            setTimeout(() => {
+                window.location.href = '/sitemap';
+            }, 200);
+        }
 
-        var s = document.readyState;
-        if (s === 'complete' || s === 'loaded' || s === 'interactive') init();
-        else document.addEventListener('DOMContentLoaded', init, false);
+        function navigate(path) {
+            const item = event.target.closest('.suggestion-item');
+            item.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                window.location.href = path;
+            }, 150);
+        }
+
+        function addButtonEffect(button) {
+            button.style.transform = 'translateY(-5px) scale(0.98)';
+            setTimeout(() => {
+                button.style.transform = '';
+            }, 150);
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        document.querySelectorAll('.floating-icon').forEach(icon => {
+            icon.addEventListener('mouseover', () => {
+                icon.style.animation = 'none';
+                icon.style.transform = 'scale(1.5) rotate(45deg)';
+                icon.style.opacity = '0.3';
+            });
+            
+            icon.addEventListener('mouseout', () => {
+                icon.style.animation = '';
+                icon.style.transform = '';
+                icon.style.opacity = '';
+            });
+        });
     </script>
 </body>
 </html>
