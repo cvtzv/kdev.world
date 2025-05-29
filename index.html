@@ -271,7 +271,7 @@
 
             async loadTracks() {
                 try {
-                    const response = await fetch('track.json');
+                    const response = await fetch('/tracks.json');
                     if (!response.ok) {
                         throw new Error('Не удалось загрузить файл треков');
                     }
