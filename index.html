@@ -425,6 +425,20 @@
         </footer>
     </div>
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('Service Worker зарегистрирован:', registration);
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при регистрации Service Worker:', error);
+                    });
+            });
+        }
+    </script>
+	
 <script>
 let tracks = [];
 let currentTrackIndex = 0;
