@@ -2,18 +2,13 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👤</text></svg>">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kdev.world</title>
+    <title>Портфолио</title>
     <style>
-	 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-	    
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-	    user-select: none;
         }
 
         body {
@@ -58,6 +53,9 @@
             font-weight: bold;
             border: 4px solid rgba(255, 255, 255, 0.3);
             transition: transform 0.3s ease;
+            background-size: cover;
+            background-position: center;
+            object-fit: cover;
         }
 
         .avatar:hover {
@@ -202,7 +200,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="avatar" style="background-image: url('/src/avatar.jpg');"></div>
+        <div class="avatar" style="background-image: url('avatar.jpg');"></div>
         <div class="name">квтишка</div>
         
         <div class="social-links">
@@ -274,10 +272,11 @@
                 try {
                     const response = await fetch('tracks.json?t=' + Date.now());
                     this.tracks = await response.json();
+                    this.parseTrackInfo();
                     this.totalTracks.textContent = this.tracks.length;
                 } catch (error) {
                     this.tracks = [
-                        { title: "Никогда не умел", artist: "Юпи", src: "/src/tracks/Юпи - Никогда не умел.mp3" }
+                        { title: "sil2nt hill", artist: "auratoshi", src: "src/tracks/16. auratoshi - sil2nt hill.mp3" }
                     ];
                     this.totalTracks.textContent = this.tracks.length;
                 }
