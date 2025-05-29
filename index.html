@@ -9,6 +9,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
         }
 
         body {
@@ -270,36 +271,20 @@
 
             async loadTracks() {
                 try {
-                    this.tracks = [
-                        {
-                            "name": "ASERT - Мысли",
-                            "src": "src/tracks/33. ASERT - Мысли.mp3"
-                        },
-                        {
-                            "name": "Полка - Знаю",
-                            "src": "src/tracks/77. Полка - Знаю.mp3"
-                        },
-                        {
-                            "name": "ТРАВМА, катя милтей - Убегай от меня",
-                            "src": "src/tracks/94. ТРАВМА, катя милтей - Убегай от меня.mp3"
-                        },
-                        {
-                            "name": "xguyxx - bbb_000",
-                            "src": "src/tracks/60. xguyxx - bbb_000.mp3"
-                        },
-                        {
-                            "name": "ТРАВМА - Закричу на весь мир",
-                            "src": "src/tracks/5. ТРАВМА - Закричу на весь мир.mp3"
-                        }
-                    ];
+                    const response = await fetch('track.json');
+                    if (!response.ok) {
+                        throw new Error('Не удалось загрузить файл треков');
+                    }
+                    this.tracks = await response.json();
                     
                     this.parseTrackInfo();
                     this.totalTracks.textContent = this.tracks.length;
                 } catch (error) {
                     console.error('Ошибка загрузки треков:', error);
                     this.tracks = [
-                        { title: "sil2nt hill", artist: "auratoshi", src: "src/tracks/16. auratoshi - sil2nt hill.mp3" }
+                        { name: "auratoshi - sil2nt hill", src: "src/tracks/16. auratoshi - sil2nt hill.mp3" }
                     ];
+                    this.parseTrackInfo();
                     this.totalTracks.textContent = this.tracks.length;
                 }
             }
