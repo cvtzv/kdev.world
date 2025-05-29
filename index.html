@@ -2,720 +2,365 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👤</text></svg>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kdev.world - portfolio</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>kdev.world</title>
     <style>
+	 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+	    
         * {
-	    user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-        
-        :root {
-            --bg-primary: #0F172A;
-            --bg-secondary: #1E293B;
-            --text-primary: #E2E8F0;
-            --accent-primary: #6EE7B7;
-            --accent-secondary: #3B82F6;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow-x: hidden;
         }
 
-        .gradient-bg {
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-        }
-
-        .glass-morphism {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.125);
-        }
-
-        #music-controls {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 300px;
-            background-color: rgba(30, 41, 59, 0.95);
-            border-radius: 12px;
-            padding: 15px;
-            transform: translateY(calc(100% + 100px));
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 1000;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            pointer-events: none;
-        }
-
-        #music-controls.active {
-            transform: translateY(0);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        #music-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            z-index: 1001;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
-
-        #music-toggle i {
-            transition: transform 0.3s ease;
-        }
-
-        #music-toggle.active i {
-            transform: rotate(180deg);
-        }
-
-		#progress-bar {
-            -webkit-appearance: none;
-            height: 4px;
-            background: #334155;
-            border-radius: 2px;
-            outline: none;
-            cursor: pointer;
-        }
-
-		#progress-bar::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--accent-primary);
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-		#progress-bar:hover::-webkit-slider-thumb {
-            opacity: 1;
-        }
-
-        .hover-card {
-            transition: all 0.3s ease;
-        }
-
-        .hover-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        .neon-text {
-            text-shadow: 
-                0 0 5px var(--accent-primary),
-                0 0 10px var(--accent-primary);
-        }
-
-        .skill-progress {
-            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .profile-banner {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            filter: brightness(0.7);
-        }
-
-        .volume-slider {
-            -webkit-appearance: none;
-            height: 6px;
-            border-radius: 3px;
-            background: #334155;
-        }
-
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--accent-primary);
-            cursor: pointer;
-        }
-
-        #loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1);
-        }
-
-        .loader-content {
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
             text-align: center;
-            transform: translateY(-20px);
-        }
-
-        .loader-logo {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-            color: var(--accent-primary);
-            text-shadow: 0 0 15px rgba(110, 231, 183, 0.5);
-            animation: pulse 2s infinite ease-in-out;
-        }
-
-        .loader-bar-container {
-            width: 80%;
-            max-width: 300px;
-            margin: 2rem 0;
-            position: relative;
-        }
-
-        .loader-text {
-            color: var(--text-primary);
-            opacity: 0.8;
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-        }
-
-        #join-btn {
-            margin-top: 2rem;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
-            padding: 12px 32px;
-            border-radius: 50px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        #join-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
-        }
-
-        #join-btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.4s ease;
-        }
-
-        #join-btn:hover::after {
-            transform: translateX(0);
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+            animation: fadeIn 1s ease-out;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .loader-content > * {
-            animation: fadeIn 0.8s ease-out forwards;
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: white;
+            font-weight: bold;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease;
         }
 
-        .loader-content .loader-logo {
-            animation-delay: 0.1s;
+        .avatar:hover {
+            transform: scale(1.1);
         }
 
-        .loader-content .loader-text {
-            animation-delay: 0.3s;
+        .name {
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
-        .loader-content .loader-bar-container {
-            animation-delay: 0.5s;
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
-        .loader-content #join-btn {
-            animation-delay: 0.7s;
+        .social-link {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        @media (max-width: 768px) {
-            .profile-banner {
-                height: 150px;
-            }
-
-            #music-controls {
-                width: calc(100% - 40px);
-                right: 20px;
-                bottom: 80px;
-            }
-
-            .container {
-                padding: 0;
-            }
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .player {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .floating {
-            animation: float 3s ease-in-out infinite;
+        .track-info {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .track-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .track-artist {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .time {
+            color: white;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        .track-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .nav-btn:hover {
+            opacity: 1;
+        }
+
+        .track-list {
+            font-size: 12px;
+            color: white;
+            opacity: 0.6;
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-    <div id="loader">
-        <div class="loader-content">
-            <div class="loader-logo">квт</div>
-            <p class="loader-text">> lyin n' dyin</p>
-            <div class="loader-bar-container">
-                <div class="loader-bar">
-                    <div id="progress" class="loader-progress"></div>
-                </div>
+<body>
+    <div class="container">
+        <div class="avatar" style="background-image: url('/src/avatar.jpg');"></div>
+        <div class="name">квтишка</div>
+        
+        <div class="social-links">
+            <a href="#" class="social-link">🐙</a>
+            <a href="#" class="social-link">📱</a>
+            <a href="#" class="social-link">🎵</a>
+            <a href="#" class="social-link">📧</a>
+        </div>
+
+        <div class="player">
+            <div class="track-info">
+                <div class="track-title" id="trackTitle">Загрузка...</div>
+                <div class="track-artist" id="trackArtist">Исполнитель</div>
             </div>
-            <button id="join-btn" class="mt-6">
-                кликни
-            </button>
-        </div>
-    </div>
-
-    <div id="music-toggle" onclick="toggleMusicControls()">
-        <i class="fas fa-music"></i>
-    </div>
-
-<div id="music-controls">
-    <div class="flex justify-between items-center mb-3">
-        <span class="font-bold text-emerald-400">Сейчас играет</span>
-        <div class="flex items-center space-x-3">
-            <button onclick="toggleShuffle()" class="text-white hover:text-emerald-400 transition-colors" title="Перемешать">
-                <i id="shuffle-icon" class="fas fa-random"></i>
-            </button>
-            <button onclick="prevTrack()" class="text-white hover:text-emerald-400 transition-colors" title="Предыдущий">
-                <i class="fas fa-step-backward"></i>
-            </button>
-            <button onclick="togglePlay()" class="text-white hover:text-emerald-400 transition-colors" title="Воспроизвести/Пауза">
-                <i id="play-pause-icon" class="fas fa-pause"></i>
-            </button>
-            <button onclick="nextTrack()" class="text-white hover:text-emerald-400 transition-colors" title="Следующий">
-                <i class="fas fa-step-forward"></i>
-            </button>
-            <button onclick="toggleRepeat()" class="text-white hover:text-emerald-400 transition-colors" title="Повтор">
-                <i id="repeat-icon" class="fas fa-redo"></i>
-            </button>
-        </div>
-    </div>
-    
-    <div class="mb-2">
-        <input type="range" id="progress-bar" value="0" class="w-full h-1 bg-gray-700 rounded-full appearance-none cursor-pointer" oninput="seekTrack(event)">
-    </div>
-    <div class="flex justify-between text-xs text-gray-400 mb-3">
-        <span id="current-time">0:00</span>
-        <span id="total-time">0:00</span>
-    </div>
-    
-    <div class="flex items-center space-x-3">
-        <i class="fas fa-volume-down text-white text-sm"></i>
-        <input type="range" id="volume-control" min="0" max="100" value="50" class="volume-slider flex-1">
-        <i class="fas fa-volume-up text-white text-sm"></i>
-    </div>
-    <div class="mt-2 text-center text-sm text-gray-400 truncate" id="current-track">Загрузка трека...</div>
-</div>
-
-    <div class="w-full max-w-2xl gradient-bg rounded-2xl shadow-2xl overflow-hidden container glass-morphism">
-        <header class="relative text-white">
-            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-slate-900/80 z-0"></div>
             
-            <div class="relative z-10 p-6 pt-12 pb-8 text-center">
-                <img src="/src/avatar.jpg" alt="avatar" class="mx-auto mb-6 w-32 h-32 rounded-full border-4 border-white/20 shadow-2xl hover-card floating">
-                <h1 class="text-4xl font-bold mb-2 neon-text">квт</h1>
-                <p class="text-lg opacity-80">> lyin n' dyin</p>
-            </div>
-        </header>
-
-        <main class="p-6 space-y-8">
-            <section class="bg-slate-800/50 rounded-xl p-6 glass-morphism">
-                <h2 class="text-2xl font-semibold mb-6 text-center text-emerald-400">My Skills</h2>
-                <div class="space-y-4">
-                    <div>
-                        <div class="flex justify-between mb-2 text-sm">
-                            <span class="text-purple-400">HTML/CSS</span>
-                            <span>42%</span>
-                        </div>
-                        <div class="bg-slate-700 rounded-full h-2">
-                            <div class="skill-progress bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" style="width: 0%" data-width="42%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-2 text-sm">
-                            <span class="text-emerald-400">JavaScript</span>
-                            <span>22%</span>
-                        </div>
-                        <div class="bg-slate-700 rounded-full h-2">
-                            <div class="skill-progress bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full" style="width: 0%" data-width="22%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-2 text-sm">
-                            <span class="text-blue-400">Python</span>
-                            <span>2%</span>
-                        </div>
-                        <div class="bg-slate-700 rounded-full h-2">
-                            <div class="skill-progress bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full" style="width: 0%" data-width="2%"></div>
-                        </div>
-                    </div>
+            <div class="controls">
+                <button class="play-btn" id="playBtn">▶</button>
+                <span class="time" id="currentTime">0:00</span>
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress" id="progress"></div>
                 </div>
-            </section>
-
-            <section>
-                <h2 class="text-2xl font-semibold mb-6 text-center text-emerald-400">My Projects</h2>
-                <div class="grid gap-4">
-                    <div class="bg-slate-800/50 rounded-xl p-6 hover-card glass-morphism">
-                        <h3 class="text-xl font-semibold mb-3 text-blue-400">kDev Workspace</h3>
-                        <p class="text-gray-300 mb-4 text-sm">Главная ветка сети моих проектов.</p>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="bg-blue-900/50 text-blue-300 px-3 py-1 rounded-full text-xs">All</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <footer class="bg-black/20 text-center py-6">
-            <div class="flex justify-center gap-4 mb-4 flex-wrap">
-                <a href="https://t.me/cfSpamBlockBot" class="text-gray-400 hover:text-blue-400 transition-colors text-sm" target="_blank">
-                    <i class="fab fa-telegram mr-1"></i> Telegram
-                </a>
-                <a href="https://github.com/kdevwp" class="text-gray-400 hover:text-blue-400 transition-colors text-sm" target="_blank">
-                    <i class="fab fa-github mr-1"></i> GitHub
-                </a>
-                <a href="https://discord.com/users/663006385554063380" class="text-gray-400 hover:text-blue-400 transition-colors text-sm" target="_blank">
-                    <i class="fab fa-discord mr-1"></i> Discord
-                </a>
+                <span class="time" id="duration">0:00</span>
             </div>
-        </footer>
+
+            <div class="track-nav">
+                <button class="nav-btn" id="prevBtn">⏮</button>
+                <div class="track-list">
+                    <span id="currentTrack">1</span> / <span id="totalTracks">0</span>
+                </div>
+                <button class="nav-btn" id="nextBtn">⏭</button>
+            </div>
+        </div>
     </div>
+
+    <audio id="audio"></audio>
 
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('Service Worker зарегистрирован:', registration);
-                    })
-                    .catch(error => {
-                        console.error('Ошибка при регистрации Service Worker:', error);
-                    });
-            });
+        class MusicPlayer {
+            constructor() {
+                this.audio = document.getElementById('audio');
+                this.playBtn = document.getElementById('playBtn');
+                this.prevBtn = document.getElementById('prevBtn');
+                this.nextBtn = document.getElementById('nextBtn');
+                this.progressBar = document.getElementById('progressBar');
+                this.progress = document.getElementById('progress');
+                this.currentTime = document.getElementById('currentTime');
+                this.duration = document.getElementById('duration');
+                this.trackTitle = document.getElementById('trackTitle');
+                this.trackArtist = document.getElementById('trackArtist');
+                this.currentTrack = document.getElementById('currentTrack');
+                this.totalTracks = document.getElementById('totalTracks');
+                
+                this.tracks = [];
+                this.currentIndex = 0;
+                this.isPlaying = false;
+                
+                this.init();
+            }
+
+            async init() {
+                await this.loadTracks();
+                this.setupEventListeners();
+                if (this.tracks.length > 0) {
+                    this.loadTrack(0);
+                }
+            }
+
+            async loadTracks() {
+                try {
+                    const response = await fetch('tracks.json?t=' + Date.now());
+                    this.tracks = await response.json();
+                    this.totalTracks.textContent = this.tracks.length;
+                } catch (error) {
+                    this.tracks = [
+                        { title: "Никогда не умел", artist: "Юпи", src: "/src/tracks/Юпи - Никогда не умел.mp3" }
+                    ];
+                    this.totalTracks.textContent = this.tracks.length;
+                }
+            }
+
+            setupEventListeners() {
+                this.playBtn.addEventListener('click', () => this.togglePlay());
+                this.prevBtn.addEventListener('click', () => this.previousTrack());
+                this.nextBtn.addEventListener('click', () => this.nextTrack());
+                this.progressBar.addEventListener('click', (e) => this.seek(e));
+                
+                this.audio.addEventListener('timeupdate', () => this.updateProgress());
+                this.audio.addEventListener('ended', () => this.nextTrack());
+                this.audio.addEventListener('loadedmetadata', () => this.updateDuration());
+            }
+
+            loadTrack(index) {
+                if (index >= 0 && index < this.tracks.length) {
+                    this.currentIndex = index;
+                    const track = this.tracks[index];
+                    
+                    this.audio.src = track.src;
+                    this.trackTitle.textContent = track.title;
+                    this.trackArtist.textContent = track.artist;
+                    this.currentTrack.textContent = index + 1;
+                    
+                    this.progress.style.width = '0%';
+                    this.currentTime.textContent = '0:00';
+                }
+            }
+
+            togglePlay() {
+                if (this.isPlaying) {
+                    this.audio.pause();
+                    this.playBtn.textContent = '▶';
+                } else {
+                    this.audio.play();
+                    this.playBtn.textContent = '⏸';
+                }
+                this.isPlaying = !this.isPlaying;
+            }
+
+            previousTrack() {
+                const newIndex = this.currentIndex > 0 ? this.currentIndex - 1 : this.tracks.length - 1;
+                this.loadTrack(newIndex);
+                if (this.isPlaying) {
+                    this.audio.play();
+                }
+            }
+
+            nextTrack() {
+                const newIndex = this.currentIndex < this.tracks.length - 1 ? this.currentIndex + 1 : 0;
+                this.loadTrack(newIndex);
+                if (this.isPlaying) {
+                    this.audio.play();
+                }
+            }
+
+            seek(e) {
+                const rect = this.progressBar.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                this.audio.currentTime = percent * this.audio.duration;
+            }
+
+            updateProgress() {
+                if (this.audio.duration) {
+                    const percent = (this.audio.currentTime / this.audio.duration) * 100;
+                    this.progress.style.width = percent + '%';
+                    this.currentTime.textContent = this.formatTime(this.audio.currentTime);
+                }
+            }
+
+            updateDuration() {
+                this.duration.textContent = this.formatTime(this.audio.duration);
+            }
+
+            formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
         }
+
+        new MusicPlayer();
     </script>
-	
-<script>
-let tracks = [];
-let currentTrackIndex = 0;
-let audio = new Audio();
-let isMusicPlaying = false;
-let isMusicControlsVisible = false;
-let isShuffleOn = false;
-let isRepeatOn = false;
-let isSeeking = false;
-
-const loader = document.getElementById('loader');
-const progressBar = document.getElementById('progress');
-const joinBtn = document.getElementById('join-btn');
-const volumeControl = document.getElementById('volume-control');
-const playPauseIcon = document.getElementById('play-pause-icon');
-const musicControls = document.getElementById('music-controls');
-const currentTrackDisplay = document.getElementById('current-track');
-const musicToggle = document.getElementById('music-toggle');
-
-async function loadTracks() {
-  try {
-    const response = await fetch('tracks.json?t=' + Date.now());
-    
-    if (!response.ok) throw new Error('Network response was not ok');
-    
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      throw new TypeError('Response is not JSON');
-    }
-    
-    tracks = await response.json();
-    
-    if (!Array.isArray(tracks) || tracks.length === 0) {
-      throw new Error('Empty or invalid tracks array');
-    }
-  } catch (error) {
-    console.error('Failed to load tracks:', error);
-    tracks = [{ "name": "Юпи - Никогда не умел", "src": "/src/tracks/Юпи - Никогда не умел.mp3" }];
-  } finally {
-    initPlayer();
-  }
-}
-
-function formatTime(seconds) {
-    if (isNaN(seconds)) return "0:00";
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-}
-
-function toggleMusicControls() {
-    isMusicControlsVisible = !isMusicControlsVisible;
-    musicControls.classList.toggle('active', isMusicControlsVisible);
-    musicToggle.classList.toggle('active', isMusicControlsVisible);
-}
-
-async function checkTrackExists(url) {
-  try {
-    if (url.startsWith('http')) return true;
-    const response = await fetch(url, { method: 'HEAD' });
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
-
-function nextTrack() {
-    let newIndex;
-    if (isShuffleOn) {
-        do {
-            newIndex = Math.floor(Math.random() * tracks.length);
-        } while (newIndex === currentTrackIndex && tracks.length > 1);
-    } else {
-        newIndex = (currentTrackIndex + 1) % tracks.length;
-    }
-    changeTrack(newIndex);
-}
-
-function prevTrack() {
-    let newIndex;
-    if (isShuffleOn) {
-        do {
-            newIndex = Math.floor(Math.random() * tracks.length);
-        } while (newIndex === currentTrackIndex && tracks.length > 1);
-    } else {
-        newIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
-    }
-    changeTrack(newIndex);
-}
-
-function changeTrack(index) {
-    currentTrackIndex = index;
-    initPlayer();
-}
-
-async function initPlayer() {
-    if (!tracks.length) return;
-    
-    audio.removeEventListener('ended', handleTrackEnd);
-    audio.removeEventListener('timeupdate', updateProgress);
-    audio.removeEventListener('loadedmetadata', updateDuration);
-
-    const trackExists = await checkTrackExists(tracks[currentTrackIndex].src);
-    if (!trackExists) {
-        console.warn(`Track not found: ${tracks[currentTrackIndex].src}`);
-        return nextTrack();
-    }
-    
-    audio.src = tracks[currentTrackIndex].src;
-    audio.volume = volumeControl.value / 100;
-    
-    try {
-        await audio.load();
-        
-        audio.addEventListener('loadedmetadata', updateDuration);
-        audio.addEventListener('timeupdate', updateProgress);
-        audio.addEventListener('ended', handleTrackEnd);
-        
-        updateTrackInfo();
-        
-        if (isMusicPlaying) {
-            await audio.play();
-        }
-    } catch (error) {
-        console.error('Error loading audio:', error);
-        nextTrack();
-    }
-}
-
-function handleTrackEnd() {
-    if (isRepeatOn) {
-        audio.currentTime = 0;
-        audio.play().catch(console.error);
-    } else {
-        nextTrack();
-    }
-}
-
-function updateDuration() {
-    const totalTimeElement = document.getElementById('total-time');
-    if (!isNaN(audio.duration)) {
-        totalTimeElement.textContent = formatTime(audio.duration);
-    }
-}
-
-function updateTrackInfo() {
-    currentTrackDisplay.textContent = `${currentTrackIndex + 1}/${tracks.length}: ${tracks[currentTrackIndex].name}`;
-    document.getElementById('current-time').textContent = "0:00";
-    document.getElementById('progress-bar').value = 0;
-    playPauseIcon.className = isMusicPlaying ? 'fas fa-pause' : 'fas fa-play';
-}
-
-function updateProgress() {
-    if (!isSeeking && audio.duration) {
-        const progressPercent = (audio.currentTime / audio.duration) * 100;
-        document.getElementById('progress-bar').value = progressPercent;
-        document.getElementById('current-time').textContent = formatTime(audio.currentTime);
-    }
-}
-
-function seekTrack(e) {
-    isSeeking = true;
-    const seekTime = (e.target.value / 100) * (audio.duration || 0);
-    
-    if (isFinite(seekTime)) {
-        document.getElementById('current-time').textContent = formatTime(seekTime);
-    }
-    
-    const handleSeekEnd = () => {
-        if (isFinite(seekTime)) {
-            audio.currentTime = seekTime;
-        }
-        isSeeking = false;
-    };
-    
-    e.target.addEventListener('mouseup', handleSeekEnd, { once: true });
-    e.target.addEventListener('touchend', handleSeekEnd, { once: true });
-}
-
-function togglePlay() {
-    if (audio.paused) {
-        audio.play()
-            .then(() => {
-                isMusicPlaying = true;
-                playPauseIcon.className = 'fas fa-pause';
-            })
-            .catch(e => {
-                console.error("Play failed:", e);
-                isMusicPlaying = false;
-                playPauseIcon.className = 'fas fa-play';
-            });
-    } else {
-        audio.pause();
-        isMusicPlaying = false;
-        playPauseIcon.className = 'fas fa-play';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    loadTracks();
-    
-    let progress = 0;
-    const interval = setInterval(() => {
-        progress += Math.random() * 15;
-        if (progress > 100) progress = 100;
-        progressBar.style.width = `${progress}%`;
-
-        if (progress >= 100) {
-            clearInterval(interval);
-            joinBtn.style.animation = "pulse 1.5s infinite ease-in-out";
-        }
-    }, 300);
-
-    const skillProgressBars = document.querySelectorAll('.skill-progress');
-    skillProgressBars.forEach(bar => {
-        const targetWidth = bar.getAttribute('data-width');
-        bar.style.width = targetWidth;
-    });
-	
-    joinBtn.addEventListener('click', () => {
-        loader.style.opacity = '0';
-        setTimeout(() => {
-            loader.style.display = 'none';
-            startMusic();
-        }, 500);
-    });
-
-    volumeControl.addEventListener('input', () => {
-        audio.volume = volumeControl.value / 100;
-    });
-});
-
-function startMusic() {
-    audio.volume = 0.1;
-    const playPromise = audio.play();
-    
-    if (playPromise !== undefined) {
-        playPromise
-            .then(() => {
-                isMusicPlaying = true;
-                playPauseIcon.className = 'fas fa-pause';
-            })
-            .catch(error => {
-                console.log("Autoplay prevented. Showing music controls.");
-                musicToggle.style.display = 'flex';
-                
-                const notification = document.createElement('div');
-                notification.textContent = 'Кликните для воспроизведения музыки';
-                notification.style.position = 'fixed';
-                notification.style.bottom = '80px';
-                notification.style.right = '20px';
-                notification.style.background = 'rgba(30,41,59,0.9)';
-                notification.style.padding = '10px';
-                notification.style.borderRadius = '5px';
-                notification.style.zIndex = '1002';
-                notification.id = 'music-notification';
-                document.body.appendChild(notification);
-                
-                setTimeout(() => notification.remove(), 5000);
-            });
-    }
-}
-
-function toggleShuffle() {
-    isShuffleOn = !isShuffleOn;
-    document.getElementById('shuffle-icon').style.color = isShuffleOn ? 'var(--accent-primary)' : 'white';
-}
-
-function toggleRepeat() {
-    isRepeatOn = !isRepeatOn;
-    document.getElementById('repeat-icon').style.color = isRepeatOn ? 'var(--accent-primary)' : 'white';
-}
-
-audio.addEventListener('error', function() {
-    console.error('Audio error:', audio.error);
-    nextTrack();
-});
-</script>
 </body>
 </html>
