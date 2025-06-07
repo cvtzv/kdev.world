@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>kdev.world - Glyph Tools</title>
+	<link href="../npm/bootstrap%405.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="../ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+	<link href="../ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+	<link href="styles.css" rel="stylesheet">
+
+</head>
+
+<body>
+	<div class="container py-5">
+		<header class="text-center mb-5">
+			<h1 class="display-4 fw-bold">Инструменты для Глифов</h1>
+			<p class="lead">Генерируйте глифы и конвертируйте их в шестнадцатеричные (Hex) символы и эмодзи</p>
+		</header>
+
+		<div id="mobileAlert" class="alert alert-warning alert-dismissible fade show d-md-none" role="alert" style="display: none;">
+			<strong>Внимание для мобильных пользователей:</strong> Версия сайта еще сыра для мобильных устройств. Советуется использовать Персональные Компьютеры.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+
+		<div class="row g-4">
+			<div class="col-md-6">
+				<div class="card h-100 shadow-sm">
+					<div class="card-header bg-primary text-white">
+						<h2 class="h5 mb-0">Глиф Генератор</h2>
+					</div>
+					<div class="card-body">
+						<div class="mb-3">
+							<div class="input-group">
+								<input type="text" id="glyph-input" class="form-control" placeholder="E0 используется по умолчанию">
+								<button id="generate-glyph" class="btn btn-primary">
+									<i class="fas fa-sync-alt me-2"></i>Generate
+								</button>
+							</div>
+						</div>
+						<div class="mb-3">
+							<strong>Загрузите ваш глиф</strong> <span class="text-muted">(формат PNG, имя файла: glyph_XX.png)</span>
+							<input type="file" class="form-control" id="glyphUpload" accept=".png">
+						</div>
+
+						<div id="glyphSuccessMsg" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+							Glyph generated successfully!
+						</div>
+						<div id="glyphErrorMsg" class="alert alert-danger alert-dismissible fade show d-none" role="alert">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="card h-100 shadow-sm">
+					<div class="card-header bg-primary text-white">
+						<h2 class="h5 mb-0">Hex ↔ Эмодзи Конвертор</h2>
+					</div>
+					<div class="card-body">
+						<div class="mb-3">
+							<button id="conversionModeButton" class="btn btn-outline-primary w-100 conversion-mode-text">
+								Hex в Эмодзи
+							</button>
+						</div>
+						<div class="input-group mb-3 converter-input-group">
+							<span id="inputPrefix" class="input-group-text">0x</span>
+							<input type="text" id="converterInput" class="form-control" placeholder="Введите Hex">
+							<button id="convertButton" class="btn btn-primary">
+								<i class="fas fa-exchange-alt me-2"></i>Convert
+							</button>
+						</div>
+						<div class="input-group converter-input-group">
+							<input type="text" class="form-control" id="converterOutput" readonly="" placeholder="Результат конвертора">
+							<button id="copyButton" class="btn btn-secondary">
+								<i class="far fa-copy me-2"></i>Copy
+							</button>
+						</div>
+						<div id="errorMsg" class="alert alert-danger d-none mt-3" role="alert"></div>
+						<div id="successMsg" class="alert alert-success d-none mt-3" role="alert"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row mt-4">
+			<div class="col-12">
+				<div class="card shadow-sm">
+					<div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+						<h5 class="h5 mb-0">Генерируемый глиф</h5>
+						<button id="darkModeToggle" class="btn btn-outline-light btn-sm">
+							<i class="fas fa-moon"></i> Переключение темного режима
+						</button>
+					</div>
+					<div class="card-body">
+						<div id="glyph-output" class="glyph-grid"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<footer class="container mt-5 mb-3">
+			<div class="row justify-content-center">
+				<div class="col-md-8">
+					<div class="d-flex justify-content-center flex-wrap gap-3">
+						<a href="https://wiki.bedrock.dev/concepts/emojis.html" class="text-decoration-none text-muted" target="_blank" rel="noopener noreferrer">
+							<i class="fas fa-book me-2"></i>Emojis & Symbols Docs
+						</a>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	<script src="../npm/bootstrap%405.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="script.js"></script>
+</body>
+
+</html>
