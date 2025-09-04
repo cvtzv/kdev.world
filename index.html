@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Космос ради прикола</title>
+  <meta name="theme-color" content="#000000" />
+  <style>
+    :root{
+      --bg: #000;
+      --star-color: #fff;
+      --blob-core: #bf5af2;
+      --blob-glow: rgba(191, 90, 242, 0.6);
+      --blob-fade: rgba(191, 90, 242, 0.15);
+      --shooting: #c8b6ff;
+      --twinkle-min: 0.25;
+      --twinkle-max: 0.95;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      overflow: hidden;
+    }
+    canvas#space {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      display: block;
+    }
+    .blob {
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      pointer-events: none;
+      border-radius: 50%;
+      background:
+        radial-gradient(closest-side, var(--blob-core) 0%, var(--blob-glow) 40%, var(--blob-fade) 70%, rgba(0,0,0,0) 100%);
+      filter: blur(10px);
+      mix-blend-mode: screen;
+      z-index: 2;
+      transform: translate3d(0,0,0);
+    }
+  </style>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <canvas id="space"></canvas>
+  <div class="blob" id="blob"></div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(function(reg){
+        console.log('Service worker registered (sw.js)', reg.scope);
+      }).catch(function(err){
+        console.warn('Service worker registration failed', err);
+      });
+    }
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>
