@@ -121,7 +121,7 @@ async function getRecentTracks() {
     const data = await fetchAPI({
         method: 'user.getRecentTracks',
         user: USERNAME,
-        limit: 10
+        limit: 20
     });
     
     if (data && data.recenttracks && data.recenttracks.track) {
@@ -133,7 +133,7 @@ async function getRecentTracks() {
             
             await updateCurrentTrack(currentTrack, isNowPlaying);
             
-            const recentList = isNowPlaying ? tracks.slice(1, 6) : tracks.slice(0, 5);
+            const recentList = isNowPlaying ? tracks.slice(1, 11) : tracks.slice(0, 10);
             updateRecentTracksList(recentList);
         }
     }
