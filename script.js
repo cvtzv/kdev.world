@@ -1,7 +1,7 @@
 const API_KEY = 'e89a2a3d9499981daad0e9cfed58ec3f';
 const USERNAME = 'whocvt';
 const API_BASE = 'https://ws.audioscrobbler.com/2.0/';
-const CUSTOM_AVATAR = './avatar.jpg';
+const CUSTOM_AVATAR = '';
 
 
 const elements = {
@@ -247,7 +247,7 @@ function setupRefreshButton() {
 function startAutoRefresh() {
     setInterval(async () => {
         await getRecentTracks();
-    }, 30000);
+    }, 10000);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -255,5 +255,3 @@ document.addEventListener('DOMContentLoaded', () => {
     setupRefreshButton();
     startAutoRefresh();
 });
-
-
